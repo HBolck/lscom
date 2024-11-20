@@ -17,6 +17,7 @@ SOURCES += \
     lscom.cpp
 
 HEADERS += \
+    Common/common.h \
     Service/iport.h \
     Service/logservice.h \
     Service/serial_imp.h \

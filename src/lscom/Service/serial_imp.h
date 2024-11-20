@@ -20,8 +20,16 @@ public:
     QStringList  getSerialStopBits();
     QStringList  getSerialParity();
 
+    void initSerialPortInstance();
 public:
     ~serialImp();
+
+
+private:
+    /**
+     * @brief 内部的串口对象
+     */
+    QSerialPort _serialPort;
 };
 
 #endif // SERIAL_IMP_H

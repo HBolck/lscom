@@ -2,6 +2,8 @@
 #define LSCOM_H
 
 #include <QMainWindow>
+#include "Service/serial_imp.h"
+#include "Service/logservice.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -15,9 +17,16 @@ class lscom : public QMainWindow
 
 public:
     lscom(QWidget *parent = nullptr);
+    void initView();
     ~lscom();
+
+private slots:
+    void on_btu_open_com_clicked();
+    void on_btu_close_com_clicked();
 
 private:
     Ui::lscom *ui;
+    serialImp *serial;
+    LogService *log;
 };
 #endif // LSCOM_H

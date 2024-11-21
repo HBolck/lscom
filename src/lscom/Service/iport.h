@@ -1,6 +1,8 @@
 #include <iostream>
 #include <windows.h>
 #include <QMainWindow>
+#include <QDebug>
+#include <map>
 #ifndef IPORT_H
 #define IPORT_H
 

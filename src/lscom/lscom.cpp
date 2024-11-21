@@ -12,7 +12,7 @@ lscom::lscom(QWidget *parent)
     this->serial = new serialImp(log,this->ui->log_text);    
 
     initView();
-    log->setTextLog(this->ui->log_text,"启动初始化结束");
+    // log->setTextLog(this->ui->log_text,"启动初始化结束",Inner,Info);
 }
 
 void lscom::initView()
@@ -66,6 +66,7 @@ void lscom::on_btu_close_com_clicked()
 void lscom::on_btu_send_data_clicked()
 {
     auto data = this->ui->text_send->toPlainText();
+    this->log->setTextLog(this->ui->log_text,data.toUtf8().constData(),Send,Info);
     this->serial->sendData(data.toUtf8());
 }
 

@@ -140,7 +140,7 @@ void serialImp::openPort()
             //设置串口的打开方式（可读可写）
             this->_serialPort.open(QIODevice::ReadWrite);
             if(this->isConnected()){
-                log->setTextLog(this->textEdit,this->_serialPort.portName().append("端口打开成功").toUtf8().constData());
+                log->setTextLog(this->textEdit,this->_serialPort.portName().append("端口打开成功").toUtf8().constData(),Inner,Info);
                 connect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
             }
         } catch (...) {
@@ -149,11 +149,11 @@ void serialImp::openPort()
                     std::rethrow_exception(std::current_exception());
                 } catch (const char* exceptionMessage) {
                     std::cout << "Caught exception: " << exceptionMessage << std::endl;
-                    log->setTextLog(this->textEdit,exceptionMessage);
+                    log->setTextLog(this->textEdit,exceptionMessage,Inner,Error);
 
                 } catch (const std::exception& e) {
                     std::cout << "Caught standard exception: " << e.what() << std::endl;
-                    log->setTextLog(this->textEdit,e.what());
+                    log->setTextLog(this->textEdit,e.what(),Inner,Error);
                 }
             }
         }
@@ -165,10 +165,10 @@ void serialImp::closePort()
 {
     if(this->isConnected()){
         this->_serialPort.close();
-        log->setTextLog(this->textEdit,"端口已关闭");
+        log->setTextLog(this->textEdit,"端口已关闭",Inner,Error);
         disconnect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
     }else{
-        log->setTextLog(this->textEdit,"端口没有打开");
+        log->setTextLog(this->textEdit,"端口没有打开",Inner,Error);
     }
 
 }
@@ -189,7 +189,7 @@ void serialImp::handleReadyRead()
     {
         QByteArray data = serial->readAll();
         qDebug() << "Received data: " << data;
-        log->setTextLog(this->textEdit,data);
+        log->setTextLog(this->textEdit,data,Rev,Info);
     }
 }
 

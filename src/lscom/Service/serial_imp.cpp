@@ -7,8 +7,7 @@ serialImp::serialImp()
 }
 
 serialImp::serialImp(LogService* log,QTextEdit *textEdit) {
-    //初始化的时候定义端口类型
-    this->portType = Serial;
+
     this->log = log;
     this->textEdit = textEdit;
 }
@@ -142,6 +141,7 @@ void serialImp::openPort()
             this->_serialPort.open(QIODevice::ReadWrite);
             if(this->isConnected()){
                 log->setTextLog(this->textEdit,this->_serialPort.portName().append("端口打开成功").toUtf8().constData());
+                connect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
             }
         } catch (...) {
             if(log != NULL){
@@ -166,15 +166,31 @@ void serialImp::closePort()
     if(this->isConnected()){
         this->_serialPort.close();
         log->setTextLog(this->textEdit,"端口已关闭");
+        disconnect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
     }else{
         log->setTextLog(this->textEdit,"端口没有打开");
     }
 
 }
 
+void serialImp::handleReadyRead()
+{
+    QSerialPort *serial = qobject_cast<QSerialPort *>(sender());
+    if (serial)
+    {
+        QByteArray data = serial->readAll();
+        qDebug() << "Received data: " << data;
+        log->setTextLog(this->textEdit,data);
+    }
+}
+
+
 serialImp::~serialImp()
 {
-
+    this->closePort();
+    // delete _serialPort;
 }
+
+
 
 

@@ -1,6 +1,12 @@
 #ifndef SERIAL_IMP_H
 #define SERIAL_IMP_H
-#include "iport.h"
+#include <iostream>
+#include <windows.h>
+#include <QMainWindow>
+#include <QDebug>
+#include <map>
+#include <QObject>
+#include <QCoreApplication>
 #include "Service/logservice.h"
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -33,18 +39,14 @@ struct SerialPortConfig{
     QString PortName;
 };
 
-class serialImp : public IPort
-{
+class serialImp :public QObject
+{    
+    Q_OBJECT
+
 public:
     serialImp();
     serialImp(LogService* log,QTextEdit *textEdit);
-
-
-    // IPort interface
-public:
     std::string getDescription();
-
-public:
     QStringList  getSerialPorts();
     QStringList  getSerialBundRates();
     QStringList  getSerialDataBits();
@@ -82,11 +84,14 @@ public:
     bool isConnected();
     void openPort();
     void closePort();
-public:
     ~serialImp();
 
 
-
+public slots:
+    /**
+     * @brief handleReadyRead
+     */
+    void handleReadyRead();
 
 private:
     /**
@@ -118,20 +123,20 @@ private:
      * @brief dataBitsMap
      */
     std::map<QString, QSerialPort::DataBits> dataBitsMap = {
-        {"5", QSerialPort::Data5},
-        {"6", QSerialPort::Data6},
-        {"7", QSerialPort::Data7},
-        {"8", QSerialPort::Data8},
-    };
+                                                            {"5", QSerialPort::Data5},
+                                                            {"6", QSerialPort::Data6},
+                                                            {"7", QSerialPort::Data7},
+                                                            {"8", QSerialPort::Data8},
+                                                            };
 
     /**
      * @brief stopBitsMap
      */
     std::map<QString, QSerialPort::StopBits> stopBitsMap = {
-        {"1", QSerialPort::OneStop},
-        {"1.5", QSerialPort::OneAndHalfStop },
-        {"2", QSerialPort::TwoStop },
-    };
+                                                            {"1", QSerialPort::OneStop},
+                                                            {"1.5", QSerialPort::OneAndHalfStop },
+                                                            {"2", QSerialPort::TwoStop },
+                                                            };
 
     /**
      * @brief parityMap

@@ -26,6 +26,12 @@ private slots:
 
     void on_btu_send_data_clicked();
 
+    void on_btu_clear_log_text_clicked();
+
+    void on_cb_hex_display_clicked(bool checked);
+
+    void on_cb_hex_send_clicked(bool checked);
+
 private:
     Ui::lscom *ui;
     serialImp *serial;

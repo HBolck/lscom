@@ -14,10 +14,10 @@ void LogService::setTextLog(QTextEdit *textEdit,const char* str,LogType logType,
     QString logBody;
     switch (logType) {
     case Rev:
-        slogType = "Rev收<<";
+        slogType = "Rev收";
         break;
     case Send:
-        slogType = "Send发>>";
+        slogType = "Send发";
         break;
     case Inner:
         slogType = "*";

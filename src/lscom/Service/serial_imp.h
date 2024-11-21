@@ -85,8 +85,15 @@ public:
     void openPort();
     void closePort();
     void sendData(QByteArray data);
+
     ~serialImp();
 
+
+    bool isHexDisplay() const;
+    void setIsHexDisplay(bool newIsHexDisplay);
+
+    bool isHexSend() const;
+    void setIsHexSend(bool newIsHexSend);
 
 public slots:
     /**
@@ -105,6 +112,14 @@ private:
      * @brief 是否被配置过
      */
     bool _isConfiged;
+    /**
+     * @brief HEX显示
+     */
+    bool _isHexDisplay;
+    /**
+     * @brief HEX发送
+     */
+    bool _isHexSend;
 
     /**
      * @brief baudRateMap

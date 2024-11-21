@@ -119,6 +119,31 @@ QSerialPort::Parity serialImp::mathParity(const QString &str)
     }
 }
 
+
+bool serialImp::isHexSend() const
+{
+    return _isHexSend;
+}
+
+void serialImp::setIsHexSend(bool newIsHexSend)
+{
+    _isHexSend = newIsHexSend;
+}
+
+bool serialImp::isHexDisplay() const
+{
+    return _isHexDisplay;
+}
+
+void serialImp::setIsHexDisplay(bool newIsHexDisplay)
+{
+    _isHexDisplay = newIsHexDisplay;
+}
+
+/**
+ * @brief 初始化串口对象参数
+ * @param config
+ */
 void serialImp::initSerialPortInstance(SerialPortConfig config)
 {
     this->_serialPort.setBaudRate(config.Baudrate);
@@ -129,10 +154,17 @@ void serialImp::initSerialPortInstance(SerialPortConfig config)
     this->_isConfiged = true;
 }
 
+/**
+ * @brief 是否连接
+ * @return
+ */
 bool serialImp::isConnected(){
     return this->_serialPort.isOpen();
 }
 
+/**
+ * @brief 打开串口
+ */
 void serialImp::openPort()
 {
     if((this->isConnected() == false) && this->_isConfiged){
@@ -161,6 +193,9 @@ void serialImp::openPort()
     }
 }
 
+/**
+ * @brief 关闭串口
+ */
 void serialImp::closePort()
 {
     if(this->isConnected()){
@@ -174,12 +209,22 @@ void serialImp::closePort()
 }
 
 /**
- * @brief serialImp::sendData
+ * @brief 发送数据
  * @param data
  */
 void serialImp::sendData(QByteArray data)
 {
-    this->_serialPort.write(data);
+
+    if(_isHexSend){
+        QString hexString;
+        for (char byte : data) {
+            hexString.append(QString("%1 ").arg(static_cast<quint8>(byte),2,16,QChar('0').toUpper()));
+        }
+        this->_serialPort.write(hexString.toUtf8());
+    }else
+        this->_serialPort.write(data);
+
+
 }
 
 void serialImp::handleReadyRead()
@@ -189,9 +234,20 @@ void serialImp::handleReadyRead()
     {
         QByteArray data = serial->readAll();
         qDebug() << "Received data: " << data;
-        log->setTextLog(this->textEdit,data,Rev,Info);
+
+        if(_isHexDisplay){
+            QString hexString;
+            for (char byte : data) {
+                hexString.append(QString("%1 ").arg(static_cast<quint8>(byte),2,16,QChar('0').toUpper()));
+            }
+            log->setTextLog(this->textEdit, hexString.toUtf8().constData(),Rev,Info);
+        }else{
+            log->setTextLog(this->textEdit, data,Rev,Info);
+        }
+
     }
 }
+
 
 
 serialImp::~serialImp()

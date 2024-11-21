@@ -15,12 +15,18 @@ lscom::lscom(QWidget *parent)
     // log->setTextLog(this->ui->log_text,"启动初始化结束",Inner,Info);
 }
 
+/**
+ * @brief 初始化页面
+ */
 void lscom::initView()
 {
+    //设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
+    //设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_close_com->setEnabled(false);
     this->ui->btu_send_data->setEnabled(false);
+    //初始化串口参数
     ui->comPortBox->clear();
     ui->comPortBox->addItems(serial->getSerialPorts());
     ui->comboBox_BaudRate->addItems(serial->getSerialBundRates());
@@ -33,7 +39,7 @@ void lscom::initView()
 
 
 /**
- * @brief lscom::on_btu_open_com_clicked
+ * @brief 开启串口
  */
 void lscom::on_btu_open_com_clicked()
 {
@@ -53,7 +59,7 @@ void lscom::on_btu_open_com_clicked()
 }
 
 /**
- * @brief lscom::on_btu_close_com_clicked
+ * @brief 关闭串口
  */
 void lscom::on_btu_close_com_clicked()
 {
@@ -63,11 +69,39 @@ void lscom::on_btu_close_com_clicked()
     this->ui->btu_close_com->setEnabled(false);
 }
 
+/**
+ * @brief 发送数据
+ */
 void lscom::on_btu_send_data_clicked()
 {
     auto data = this->ui->text_send->toPlainText();
     this->log->setTextLog(this->ui->log_text,data.toUtf8().constData(),Send,Info);
     this->serial->sendData(data.toUtf8());
+}
+
+/**
+ * @brief 清空窗口
+ */
+void lscom::on_btu_clear_log_text_clicked()
+{
+    this->ui->log_text->clear();
+}
+
+/**
+ * @brief hex显示勾选事件
+ * @param checked
+ */
+void lscom::on_cb_hex_display_clicked(bool checked)
+{
+    this->serial->setIsHexDisplay(checked);
+}
+/**
+ * @brief hex发送勾选事件
+ * @param checked
+ */
+void lscom::on_cb_hex_send_clicked(bool checked)
+{
+    this->serial->setIsHexSend(checked);
 }
 
 lscom::~lscom()
@@ -76,6 +110,14 @@ lscom::~lscom()
     delete log;
     delete ui;
 }
+
+
+
+
+
+
+
+
 
 
 

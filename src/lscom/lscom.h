@@ -24,6 +24,8 @@ private slots:
     void on_btu_open_com_clicked();
     void on_btu_close_com_clicked();
 
+    void on_btu_send_data_clicked();
+
 private:
     Ui::lscom *ui;
     serialImp *serial;

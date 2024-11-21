@@ -173,6 +173,15 @@ void serialImp::closePort()
 
 }
 
+/**
+ * @brief serialImp::sendData
+ * @param data
+ */
+void serialImp::sendData(QByteArray data)
+{
+    this->_serialPort.write(data);
+}
+
 void serialImp::handleReadyRead()
 {
     QSerialPort *serial = qobject_cast<QSerialPort *>(sender());

@@ -20,6 +20,7 @@ void lscom::initView()
     ui->log_text->setReadOnly(true);
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_close_com->setEnabled(false);
+    this->ui->btu_send_data->setEnabled(false);
     ui->comPortBox->clear();
     ui->comPortBox->addItems(serial->getSerialPorts());
     ui->comboBox_BaudRate->addItems(serial->getSerialBundRates());
@@ -46,6 +47,7 @@ void lscom::on_btu_open_com_clicked()
     this->serial->openPort();
     if(this->serial->isConnected()){
         this->ui->btu_open_com->setEnabled(false);
+        this->ui->btu_send_data->setEnabled(true);
         this->ui->btu_close_com->setEnabled(true);
     }
 }
@@ -57,10 +59,15 @@ void lscom::on_btu_close_com_clicked()
 {
     this->serial->closePort();
     this->ui->btu_open_com->setEnabled(true);
+    this->ui->btu_send_data->setEnabled(false);
     this->ui->btu_close_com->setEnabled(false);
 }
 
-
+void lscom::on_btu_send_data_clicked()
+{
+    auto data = this->ui->text_send->toPlainText();
+    this->serial->sendData(data.toUtf8());
+}
 
 lscom::~lscom()
 {
@@ -68,3 +75,6 @@ lscom::~lscom()
     delete log;
     delete ui;
 }
+
+
+

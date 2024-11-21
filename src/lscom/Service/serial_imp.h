@@ -84,6 +84,7 @@ public:
     bool isConnected();
     void openPort();
     void closePort();
+    void sendData(QByteArray data);
     ~serialImp();
 
 

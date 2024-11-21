@@ -244,24 +244,37 @@
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>420</y>
+      <y>410</y>
       <width>351</width>
-      <height>131</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="title">
      <string>发送区</string>
     </property>
-    <widget class="QTextEdit" name="textEdit_2">
+    <widget class="QTextEdit" name="text_send">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>30</y>
        <width>331</width>
-       <height>91</height>
+       <height>51</height>
       </rect>
      </property>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="btu_send_data">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>470</y>
+      <width>92</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>发  送</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -270,7 +283,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

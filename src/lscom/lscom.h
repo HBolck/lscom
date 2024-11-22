@@ -32,6 +32,8 @@ private slots:
 
     void on_cb_hex_send_clicked(bool checked);
 
+    void on_btu_clear_send_text_clicked();
+
 private:
     Ui::lscom *ui;
     serialImp *serial;

@@ -88,6 +88,14 @@ void lscom::on_btu_clear_log_text_clicked()
 }
 
 /**
+ * @brief 清空发送区内容
+ */
+void lscom::on_btu_clear_send_text_clicked()
+{
+    this->ui->text_send->clear();
+}
+
+/**
  * @brief hex显示勾选事件
  * @param checked
  */
@@ -104,12 +112,16 @@ void lscom::on_cb_hex_send_clicked(bool checked)
     this->serial->setIsHexSend(checked);
 }
 
+
+
 lscom::~lscom()
 {
     delete serial;
     delete log;
     delete ui;
 }
+
+
 
 
 

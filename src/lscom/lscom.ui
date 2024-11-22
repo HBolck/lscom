@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1088</width>
-    <height>620</height>
+    <width>855</width>
+    <height>619</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -23,7 +23,7 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>850</x>
+      <x>620</x>
       <y>380</y>
       <width>231</width>
       <height>191</height>
@@ -192,14 +192,14 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>400</y>
+      <y>470</y>
       <width>191</width>
       <height>101</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>14</pointsize>
+      <pointsize>20</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -212,7 +212,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1080</width>
+      <width>851</width>
       <height>341</height>
      </rect>
     </property>
@@ -222,8 +222,8 @@
      <rect>
       <x>190</x>
       <y>400</y>
-      <width>661</width>
-      <height>101</height>
+      <width>431</width>
+      <height>171</height>
      </rect>
     </property>
    </widget>
@@ -248,7 +248,7 @@
    <widget class="QPushButton" name="btu_send_data_3">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>450</x>
       <y>340</y>
       <width>92</width>
       <height>28</height>
@@ -258,20 +258,10 @@
      <string>打开文件</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="text_file_path">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>340</y>
-      <width>331</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btu_send_data_4">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>540</x>
       <y>340</y>
       <width>92</width>
       <height>28</height>
@@ -284,8 +274,8 @@
    <widget class="QPushButton" name="btu_send_data_5">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>340</y>
+      <x>400</x>
+      <y>370</y>
       <width>51</width>
       <height>28</height>
      </rect>
@@ -294,12 +284,12 @@
      <string>停止</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btu_send_data_6">
+   <widget class="QPushButton" name="btu_clear_send_text">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>90</x>
       <y>340</y>
-      <width>81</width>
+      <width>91</width>
       <height>28</height>
      </rect>
     </property>
@@ -310,7 +300,7 @@
    <widget class="QCheckBox" name="checkBox">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>640</x>
       <y>340</y>
       <width>61</width>
       <height>25</height>
@@ -323,20 +313,20 @@
    <widget class="QCheckBox" name="checkBox_2">
     <property name="geometry">
      <rect>
-      <x>800</x>
-      <y>340</y>
-      <width>81</width>
+      <x>10</x>
+      <y>440</y>
+      <width>71</width>
       <height>25</height>
      </rect>
     </property>
     <property name="text">
-     <string>English</string>
+     <string>定时发送</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btu_send_data_7">
     <property name="geometry">
      <rect>
-      <x>880</x>
+      <x>700</x>
       <y>340</y>
       <width>81</width>
       <height>28</height>
@@ -344,32 +334,6 @@
     </property>
     <property name="text">
      <string>保存参数</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btu_send_data_8">
-    <property name="geometry">
-     <rect>
-      <x>960</x>
-      <y>340</y>
-      <width>51</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>扩展</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btu_send_data_9">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>340</y>
-      <width>51</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>——</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btu_open_com">
@@ -407,9 +371,9 @@
    <widget class="QCheckBox" name="cb_hex_display">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>370</y>
-      <width>91</width>
+      <x>10</x>
+      <y>410</y>
+      <width>71</width>
       <height>25</height>
      </rect>
     </property>
@@ -420,10 +384,10 @@
    <widget class="QPushButton" name="btu_send_data_10">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>190</x>
       <y>370</y>
       <width>92</width>
-      <height>21</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -433,9 +397,9 @@
    <widget class="QCheckBox" name="checkBox_4">
     <property name="geometry">
      <rect>
-      <x>390</x>
+      <x>290</x>
       <y>370</y>
-      <width>141</width>
+      <width>111</width>
       <height>25</height>
      </rect>
     </property>
@@ -446,14 +410,47 @@
    <widget class="QCheckBox" name="cb_hex_send">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>370</y>
-      <width>91</width>
+      <x>80</x>
+      <y>410</y>
+      <width>71</width>
       <height>25</height>
      </rect>
     </property>
     <property name="text">
      <string>HEX发送</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="sendperiod">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>440</y>
+      <width>71</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="filepath">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>340</y>
+      <width>261</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>440</y>
+      <width>31</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ms</string>
     </property>
    </widget>
   </widget>
@@ -462,7 +459,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1088</width>
+     <width>855</width>
      <height>21</height>
     </rect>
    </property>

@@ -191,6 +191,16 @@ void serialImp::openPort()
                 log->setTextLog(this->textEdit, this->_serialPort.portName().append("端口打开成功").toUtf8().constData(), Inner, Info);
                 connect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
             }
+            else
+            {
+                log->setTextLog(this->textEdit,
+                                this->_serialPort.portName()
+                                    .append("端口打开失败！\r检查端口是否被占用或者接触不良")
+                                    .toUtf8()
+                                    .constData(),
+                                Inner,
+                                Error);
+            }
         }
         catch (...)
         {

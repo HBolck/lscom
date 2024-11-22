@@ -271,19 +271,6 @@
      <string>发送文件</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btu_send_data_5">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>370</y>
-      <width>51</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>停止</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btu_clear_send_text">
     <property name="geometry">
      <rect>
@@ -310,7 +297,7 @@
      <string>最前</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox_2">
+   <widget class="QCheckBox" name="cb_time_send">
     <property name="geometry">
      <rect>
       <x>10</x>

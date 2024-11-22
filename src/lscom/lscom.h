@@ -2,8 +2,10 @@
 #define LSCOM_H
 
 #include <QMainWindow>
-#include "Service/serial_imp.h"
+#include "Common/common.h"
+#include "Service/serialImp.h"
 #include "Service/logservice.h"
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,11 +19,12 @@ class lscom : public QMainWindow
 
 public:
     lscom(QWidget *parent = nullptr);
-    void initView();
+
     ~lscom();
 
 private slots:
     void on_btu_open_com_clicked();
+
     void on_btu_close_com_clicked();
 
     void on_btu_send_data_clicked();
@@ -34,9 +37,27 @@ private slots:
 
     void on_btu_clear_send_text_clicked();
 
+    void on_cb_time_send_clicked(bool checked);
+
 private:
     Ui::lscom *ui;
     serialImp *serial;
     LogService *log;
+    QTimer* sendDataTimer;
+    bool _sendTimerStart = false;
+
+    /**
+     * @brief 初始化页面
+     */
+    void initView();
+    /**
+     * @brief 初始化定时器
+     */
+    void initTimer();
+
+    /**
+     * @brief 销毁定时器
+     */
+    void distoryTimer();
 };
 #endif // LSCOM_H

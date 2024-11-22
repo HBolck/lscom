@@ -1,5 +1,5 @@
-#ifndef SERIAL_IMP_H
-#define SERIAL_IMP_H
+#ifndef SERIALIMP_H
+#define SERIALIMP_H
 #include <iostream>
 #include <windows.h>
 #include <QMainWindow>
@@ -11,11 +11,11 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
-
 /**
  * @brief The SerialPortConfig
  */
-struct SerialPortConfig{
+struct SerialPortConfig
+{
     /**
      * @brief Baudrate
      */
@@ -39,19 +39,19 @@ struct SerialPortConfig{
     QString PortName;
 };
 
-class serialImp :public QObject
-{    
+class serialImp : public QObject
+{
     Q_OBJECT
 
 public:
     serialImp();
-    serialImp(LogService* log,QTextEdit *textEdit);
+    serialImp(LogService *log, QTextEdit *textEdit);
     std::string getDescription();
-    QStringList  getSerialPorts();
-    QStringList  getSerialBundRates();
-    QStringList  getSerialDataBits();
-    QStringList  getSerialStopBits();
-    QStringList  getSerialParity();
+    QStringList getSerialPorts();
+    QStringList getSerialBundRates();
+    QStringList getSerialDataBits();
+    QStringList getSerialStopBits();
+    QStringList getSerialParity();
 
     /**
      * @brief mathBaudRate
@@ -88,7 +88,6 @@ public:
 
     ~serialImp();
 
-
     bool isHexDisplay() const;
     void setIsHexDisplay(bool newIsHexDisplay);
 
@@ -106,7 +105,7 @@ private:
      * @brief 内部的串口对象
      */
     QSerialPort _serialPort;
-    LogService* log;
+    LogService *log;
     QTextEdit *textEdit;
     /**
      * @brief 是否被配置过
@@ -132,27 +131,26 @@ private:
         {"19200", QSerialPort::Baud19200},
         {"38400", QSerialPort::Baud38400},
         {"57600", QSerialPort::Baud57600},
-        {"115200", QSerialPort::Baud115200}
-    };
+        {"115200", QSerialPort::Baud115200}};
 
     /**
      * @brief dataBitsMap
      */
     std::map<QString, QSerialPort::DataBits> dataBitsMap = {
-                                                            {"5", QSerialPort::Data5},
-                                                            {"6", QSerialPort::Data6},
-                                                            {"7", QSerialPort::Data7},
-                                                            {"8", QSerialPort::Data8},
-                                                            };
+        {"5", QSerialPort::Data5},
+        {"6", QSerialPort::Data6},
+        {"7", QSerialPort::Data7},
+        {"8", QSerialPort::Data8},
+    };
 
     /**
      * @brief stopBitsMap
      */
     std::map<QString, QSerialPort::StopBits> stopBitsMap = {
-                                                            {"1", QSerialPort::OneStop},
-                                                            {"1.5", QSerialPort::OneAndHalfStop },
-                                                            {"2", QSerialPort::TwoStop },
-                                                            };
+        {"1", QSerialPort::OneStop},
+        {"1.5", QSerialPort::OneAndHalfStop},
+        {"2", QSerialPort::TwoStop},
+    };
 
     /**
      * @brief parityMap
@@ -160,9 +158,7 @@ private:
     std::map<QString, QSerialPort::Parity> parityMap = {
         {"None", QSerialPort::NoParity},
         {"Odd", QSerialPort::EvenParity},
-        {"Even", QSerialPort::OddParity}
-    };
-
+        {"Even", QSerialPort::OddParity}};
 };
 
-#endif // SERIAL_IMP_H
+#endif // SERIALIMP_H

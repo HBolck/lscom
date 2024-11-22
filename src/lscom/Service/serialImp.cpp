@@ -1,12 +1,12 @@
-#include "serial_imp.h"
+#include "serialImp.h"
 #include "qserialport.h"
 
 serialImp::serialImp()
 {
-
 }
 
-serialImp::serialImp(LogService* log,QTextEdit *textEdit) {
+serialImp::serialImp(LogService *log, QTextEdit *textEdit)
+{
 
     this->log = log;
     this->textEdit = textEdit;
@@ -20,7 +20,8 @@ std::string serialImp::getDescription()
 QStringList serialImp::getSerialPorts()
 {
     QStringList qSlist;
-    foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
         qSlist.append(info.portName());
         // qDebug() << "Port Name: " << info.portName();
     }
@@ -38,25 +39,27 @@ QStringList serialImp::getSerialBundRates()
     qslist.append("38400");
     qslist.append("57600");
     qslist.append("115200");
-    return  qslist;
+    return qslist;
 }
 
 QStringList serialImp::getSerialDataBits()
 {
     QStringList qslist;
-    for(const auto& piar : dataBitsMap){
+    for (const auto &piar : dataBitsMap)
+    {
         qslist.append(piar.first);
     }
-    return  qslist;
+    return qslist;
 }
 
 QStringList serialImp::getSerialStopBits()
 {
     QStringList qslist;
-    for(const auto& piar : stopBitsMap){
+    for (const auto &piar : stopBitsMap)
+    {
         qslist.append(piar.first);
     }
-    return  qslist;
+    return qslist;
 }
 
 QStringList serialImp::getSerialParity()
@@ -65,9 +68,8 @@ QStringList serialImp::getSerialParity()
     qslist.append("None");
     qslist.append("Odd");
     qslist.append("Even");
-    return  qslist;
+    return qslist;
 }
-
 
 /**
  * @brief serialImp::mathBaudRate
@@ -77,21 +79,26 @@ QStringList serialImp::getSerialParity()
 QSerialPort::BaudRate serialImp::mathBaudRate(const QString &baudRateStr)
 {
     auto it = baudRateMap.find(baudRateStr);
-    if (it!= baudRateMap.end()) {
+    if (it != baudRateMap.end())
+    {
         return it->second;
-    } else {
+    }
+    else
+    {
         // 处理无效的输入
         return QSerialPort::Baud9600;
     }
 }
 
-
 QSerialPort::DataBits serialImp::mathDataBits(const QString &str)
 {
     auto it = dataBitsMap.find(str);
-    if (it!= dataBitsMap.end()) {
+    if (it != dataBitsMap.end())
+    {
         return it->second;
-    } else {
+    }
+    else
+    {
         // 处理无效的输入
         return QSerialPort::Data8;
     }
@@ -100,9 +107,12 @@ QSerialPort::DataBits serialImp::mathDataBits(const QString &str)
 QSerialPort::StopBits serialImp::mathStopBits(const QString &str)
 {
     auto it = stopBitsMap.find(str);
-    if (it!= stopBitsMap.end()) {
+    if (it != stopBitsMap.end())
+    {
         return it->second;
-    } else {
+    }
+    else
+    {
         // 处理无效的输入
         return QSerialPort::OneStop;
     }
@@ -111,14 +121,16 @@ QSerialPort::StopBits serialImp::mathStopBits(const QString &str)
 QSerialPort::Parity serialImp::mathParity(const QString &str)
 {
     auto it = parityMap.find(str);
-    if (it!= parityMap.end()) {
+    if (it != parityMap.end())
+    {
         return it->second;
-    } else {
+    }
+    else
+    {
         // 处理无效的输入
         return QSerialPort::NoParity;
     }
 }
-
 
 bool serialImp::isHexSend() const
 {
@@ -158,7 +170,8 @@ void serialImp::initSerialPortInstance(SerialPortConfig config)
  * @brief 是否连接
  * @return
  */
-bool serialImp::isConnected(){
+bool serialImp::isConnected()
+{
     return this->_serialPort.isOpen();
 }
 
@@ -167,29 +180,38 @@ bool serialImp::isConnected(){
  */
 void serialImp::openPort()
 {
-    if((this->isConnected() == false) && this->_isConfiged){
-        try {
-            //设置串口的打开方式（可读可写）
+    if ((this->isConnected() == false) && this->_isConfiged)
+    {
+        try
+        {
+            // 设置串口的打开方式（可读可写）
             this->_serialPort.open(QIODevice::ReadWrite);
-            if(this->isConnected()){
-                log->setTextLog(this->textEdit,this->_serialPort.portName().append("端口打开成功").toUtf8().constData(),Inner,Info);
+            if (this->isConnected())
+            {
+                log->setTextLog(this->textEdit, this->_serialPort.portName().append("端口打开成功").toUtf8().constData(), Inner, Info);
                 connect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
             }
-        } catch (...) {
-            if(log != NULL){
-                try {
+        }
+        catch (...)
+        {
+            if (log != NULL)
+            {
+                try
+                {
                     std::rethrow_exception(std::current_exception());
-                } catch (const char* exceptionMessage) {
+                }
+                catch (const char *exceptionMessage)
+                {
                     std::cout << "Caught exception: " << exceptionMessage << std::endl;
-                    log->setTextLog(this->textEdit,exceptionMessage,Inner,Error);
-
-                } catch (const std::exception& e) {
+                    log->setTextLog(this->textEdit, exceptionMessage, Inner, Error);
+                }
+                catch (const std::exception &e)
+                {
                     std::cout << "Caught standard exception: " << e.what() << std::endl;
-                    log->setTextLog(this->textEdit,e.what(),Inner,Error);
+                    log->setTextLog(this->textEdit, e.what(), Inner, Error);
                 }
             }
         }
-
     }
 }
 
@@ -198,14 +220,16 @@ void serialImp::openPort()
  */
 void serialImp::closePort()
 {
-    if(this->isConnected()){
+    if (this->isConnected())
+    {
         this->_serialPort.close();
-        log->setTextLog(this->textEdit,"端口已关闭",Inner,Error);
+        log->setTextLog(this->textEdit, "端口已关闭", Inner, Error);
         disconnect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
-    }else{
-        log->setTextLog(this->textEdit,"端口没有打开",Inner,Error);
     }
-
+    else
+    {
+        log->setTextLog(this->textEdit, "端口没有打开", Inner, Error);
+    }
 }
 
 /**
@@ -215,16 +239,17 @@ void serialImp::closePort()
 void serialImp::sendData(QByteArray data)
 {
 
-    if(_isHexSend){
+    if (_isHexSend)
+    {
         QString hexString;
-        for (char byte : data) {
-            hexString.append(QString("%1 ").arg(static_cast<quint8>(byte),2,16,QChar('0').toUpper()));
+        for (char byte : data)
+        {
+            hexString.append(QString("%1 ").arg(static_cast<quint8>(byte), 2, 16, QChar('0').toUpper()));
         }
         this->_serialPort.write(hexString.toUtf8());
-    }else
+    }
+    else
         this->_serialPort.write(data);
-
-
 }
 
 void serialImp::handleReadyRead()
@@ -235,27 +260,24 @@ void serialImp::handleReadyRead()
         QByteArray data = serial->readAll();
         qDebug() << "Received data: " << data;
 
-        if(_isHexDisplay){
+        if (_isHexDisplay)
+        {
             QString hexString;
-            for (char byte : data) {
-                hexString.append(QString("%1 ").arg(static_cast<quint8>(byte),2,16,QChar('0').toUpper()));
+            for (char byte : data)
+            {
+                hexString.append(QString("%1 ").arg(static_cast<quint8>(byte), 2, 16, QChar('0').toUpper()));
             }
-            log->setTextLog(this->textEdit, hexString.toUtf8().constData(),Rev,Info);
-        }else{
-            log->setTextLog(this->textEdit, data,Rev,Info);
+            log->setTextLog(this->textEdit, hexString.toUtf8().constData(), Rev, Info);
         }
-
+        else
+        {
+            log->setTextLog(this->textEdit, data, Rev, Info);
+        }
     }
 }
-
-
 
 serialImp::~serialImp()
 {
     this->closePort();
     // delete _serialPort;
 }
-
-
-
-

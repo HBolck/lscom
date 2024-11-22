@@ -2,17 +2,15 @@
 #include "ui_lscom.h"
 
 lscom::lscom(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::lscom)
+    : QMainWindow(parent), ui(new Ui::lscom)
 {
     ui->setupUi(this);
 
-    //构建服务类对象
+    // 构建服务类对象
     this->log = new LogService();
-    this->serial = new serialImp(log,this->ui->log_text);    
+    this->serial = new serialImp(log, this->ui->log_text);
 
     initView();
-    // log->setTextLog(this->ui->log_text,"启动初始化结束",Inner,Info);
 }
 
 /**
@@ -20,23 +18,73 @@ lscom::lscom(QWidget *parent)
  */
 void lscom::initView()
 {
-    //设置日志区域不可编辑
+    // 设置默认发送时间间隔
+    this->ui->sendperiod->setText("1000");
+    // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
-    //设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
+    // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_close_com->setEnabled(false);
     this->ui->btu_send_data->setEnabled(false);
-    //初始化串口参数
+    // 初始化串口参数
     ui->comPortBox->clear();
     ui->comPortBox->addItems(serial->getSerialPorts());
     ui->comboBox_BaudRate->addItems(serial->getSerialBundRates());
-    ui->comboBox_BaudRate->setCurrentIndex(3);//9600
+    ui->comboBox_BaudRate->setCurrentIndex(3); // 9600
     ui->comboBox_DateBits->addItems(serial->getSerialDataBits());
-    ui->comboBox_DateBits->setCurrentIndex(3);//8
+    ui->comboBox_DateBits->setCurrentIndex(3); // 8
     ui->comboBox_StopBits->addItems(serial->getSerialStopBits());
     ui->comboBox_Parity->addItems(serial->getSerialParity());
 }
 
+/**
+ * @brief 初始化定时器
+ */
+void lscom::initTimer()
+{
+    // distoryTimer();
+    QString sendperiodTime = this->ui->sendperiod->text();
+    if (sendperiodTime.isEmpty())
+    {
+        this->log->setTextLog(this->ui->log_text, "时间间隔不能为空！", Inner, Error);
+        return;
+    }
+    uint interval;
+    bool flag = isQStringToUint(sendperiodTime, &interval);
+    if (!flag)
+    {
+        this->log->setTextLog(this->ui->log_text, "时间间隔格式错误！", Inner, Error);
+        return;
+    }
+    this->sendDataTimer = new QTimer();
+    this->sendDataTimer->setInterval(interval);
+    // 注册发送命令 定义槽关联
+    connect(this->sendDataTimer, &QTimer::timeout, this, &lscom::on_btu_send_data_clicked);
+    // 开启定时器
+    this->sendDataTimer->start();
+    this->_sendTimerStart = true;
+    this->ui->btu_send_data->setEnabled(false);
+}
+
+/**
+ * @brief 销毁定时器
+ */
+void lscom::distoryTimer()
+{
+    if (this->sendDataTimer != nullptr)
+    {
+        if (this->_sendTimerStart)
+        {
+            this->sendDataTimer->stop();
+            this->_sendTimerStart = false;
+            // 解绑定时器关联的槽事件
+            disconnect(this->sendDataTimer, &QTimer::timeout, this, &lscom::on_btu_send_data_clicked);
+            //todo:这个地方保持怀疑态度，可能会出现内存泄露的情况
+            delete this->sendDataTimer;
+            this->ui->btu_send_data->setEnabled(true);
+        }
+    }
+}
 
 /**
  * @brief 开启串口
@@ -51,7 +99,8 @@ void lscom::on_btu_open_com_clicked()
     config.PortName = this->ui->comPortBox->currentText();
     this->serial->initSerialPortInstance(config);
     this->serial->openPort();
-    if(this->serial->isConnected()){
+    if (this->serial->isConnected())
+    {
         this->ui->btu_open_com->setEnabled(false);
         this->ui->btu_send_data->setEnabled(true);
         this->ui->btu_close_com->setEnabled(true);
@@ -75,7 +124,9 @@ void lscom::on_btu_close_com_clicked()
 void lscom::on_btu_send_data_clicked()
 {
     auto data = this->ui->text_send->toPlainText();
-    this->log->setTextLog(this->ui->log_text,data.toUtf8().constData(),Send,Info);
+    if (data.isEmpty())
+        return;
+    this->log->setTextLog(this->ui->log_text, data.toUtf8().constData(), Send, Info);
     this->serial->sendData(data.toUtf8());
 }
 
@@ -112,24 +163,29 @@ void lscom::on_cb_hex_send_clicked(bool checked)
     this->serial->setIsHexSend(checked);
 }
 
-
+/**
+ * @brief 定时发送勾选事件
+ * @param checked
+ */
+void lscom::on_cb_time_send_clicked(bool checked)
+{
+    if (this->serial->isConnected())
+    {
+        if (checked)
+        {
+            this->initTimer();
+        }
+        else
+        {
+            this->distoryTimer();
+        }
+    }
+}
 
 lscom::~lscom()
 {
+    this->distoryTimer();
     delete serial;
     delete log;
     delete ui;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

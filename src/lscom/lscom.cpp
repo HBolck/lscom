@@ -63,6 +63,7 @@ void lscom::initTimer()
     // 开启定时器
     this->sendDataTimer->start();
     this->_sendTimerStart = true;
+    // 设置发送按钮不可用
     this->ui->btu_send_data->setEnabled(false);
 }
 
@@ -79,8 +80,9 @@ void lscom::distoryTimer()
             this->_sendTimerStart = false;
             // 解绑定时器关联的槽事件
             disconnect(this->sendDataTimer, &QTimer::timeout, this, &lscom::on_btu_send_data_clicked);
-            //todo:这个地方保持怀疑态度，可能会出现内存泄露的情况
+            // todo:这个地方保持怀疑态度，可能会出现内存泄露的情况
             delete this->sendDataTimer;
+            // 恢复发送按钮可用状态
             this->ui->btu_send_data->setEnabled(true);
         }
     }

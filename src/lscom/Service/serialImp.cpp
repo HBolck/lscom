@@ -190,6 +190,7 @@ void serialImp::openPort()
             {
                 log->setTextLog(this->textEdit, this->_serialPort.portName().append("端口打开成功").toUtf8().constData(), Inner, Info);
                 connect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
+                // connect(&_serialPort, &QSerialPort::readyRead, this, &lscom::handleReadyRead);
             }
             else
             {
@@ -283,11 +284,11 @@ void serialImp::handleReadyRead()
         {
             log->setTextLog(this->textEdit, data, Rev, Info);
         }
+        this->serialRevDataSignal(data.size());
     }
 }
 
 serialImp::~serialImp()
 {
     this->closePort();
-    // delete _serialPort;
 }

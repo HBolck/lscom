@@ -28,3 +28,8 @@ QString getQStringHex(QByteArray data)
     }
     return hexString;
 }
+
+void setNumOnLabel(QLabel *lel, QString str, long num)
+{
+    lel->setText(str + QString::number(num));
+}

@@ -9,8 +9,9 @@ lscom::lscom(QWidget *parent)
     // 构建服务类对象
     this->log = new LogService();
     this->serial = new serialImp(log, this->ui->log_text);
-
     initView();
+
+    // this->serial->updateRevCountPrt() = &lscom::updateRevConter;
 }
 
 /**
@@ -18,6 +19,9 @@ lscom::lscom(QWidget *parent)
  */
 void lscom::initView()
 {
+
+    initStatusBar();
+
     // 设置默认发送时间间隔
     this->ui->sendperiod->setText("1000");
     // 设置日志区域不可编辑
@@ -35,6 +39,38 @@ void lscom::initView()
     ui->comboBox_DateBits->setCurrentIndex(3); // 8
     ui->comboBox_StopBits->addItems(serial->getSerialStopBits());
     ui->comboBox_Parity->addItems(serial->getSerialParity());
+}
+
+/**
+ * @brief lscom::初始化状态栏
+ */
+void lscom::initStatusBar()
+{
+    // 源码链接描述
+    sourceCodelinkLable = new QLabel(this);
+    sourceCodelinkLable->setOpenExternalLinks(true);
+    sourceCodelinkLable->setText("<style> a {text-decoration: none} </style> <a href=\"https://gitee.com/hblockd/lscom\">源代码");
+    sourceCodelinkLable->setMinimumSize(40, 20);
+
+    this->ui->statusbar->addWidget(sourceCodelinkLable);
+    this->version = new QLabel(this);
+    this->version->setText("v1.2.0");
+    version->setMinimumSize(40, 20);
+
+    this->ui->statusbar->addWidget(version);
+    this->recConterLabel = new QLabel(this);
+    this->sendConterLabel = new QLabel(this);
+
+    sendConterLabel->setMinimumSize(80, 20);
+    recConterLabel->setMinimumSize(80, 20);
+    version->setMinimumSize(40, 20);
+    sourceCodelinkLable->setMinimumSize(40, 20);
+    this->recConter = 0;
+    this->sendConter = 0;
+    setNumOnLabel(this->recConterLabel, "R:", recConter);
+    setNumOnLabel(this->sendConterLabel, "S:", sendConter);
+    this->ui->statusbar->addWidget(recConterLabel);
+    this->ui->statusbar->addWidget(sendConterLabel);
 }
 
 /**
@@ -106,6 +142,7 @@ void lscom::on_btu_open_com_clicked()
         this->ui->btu_open_com->setEnabled(false);
         this->ui->btu_send_data->setEnabled(true);
         this->ui->btu_close_com->setEnabled(true);
+        connect(this->serial, &serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
     }
 }
 
@@ -118,6 +155,7 @@ void lscom::on_btu_close_com_clicked()
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_send_data->setEnabled(false);
     this->ui->btu_close_com->setEnabled(false);
+    disconnect(this->serial, &serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
 }
 
 /**
@@ -130,6 +168,7 @@ void lscom::on_btu_send_data_clicked()
         return;
     this->log->setTextLog(this->ui->log_text, data.toUtf8().constData(), Send, Info);
     this->serial->sendData(data.toUtf8());
+    setNumOnLabel(sendConterLabel, "S:", sendConter += data.toUtf8().size());
 }
 
 /**
@@ -138,6 +177,8 @@ void lscom::on_btu_send_data_clicked()
 void lscom::on_btu_clear_log_text_clicked()
 {
     this->ui->log_text->clear();
+    recConter = 0;
+    setNumOnLabel(recConterLabel, "R:", 0);
 }
 
 /**
@@ -146,6 +187,8 @@ void lscom::on_btu_clear_log_text_clicked()
 void lscom::on_btu_clear_send_text_clicked()
 {
     this->ui->text_send->clear();
+    sendConter = 0;
+    setNumOnLabel(sendConterLabel, "S:", 0);
 }
 
 /**
@@ -190,4 +233,9 @@ lscom::~lscom()
     delete serial;
     delete log;
     delete ui;
+}
+
+void lscom::oSerialReved(long data)
+{
+    setNumOnLabel(recConterLabel, "R:", recConter += data);
 }

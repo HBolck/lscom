@@ -3,6 +3,7 @@
 
 #endif // COMMON_H
 #include <QCoreApplication>
+#include <QLabel>
 //公共定义的区域
 struct name
 {
@@ -23,3 +24,7 @@ bool isQStringToUint(const QString &str,uint *value);
  * @param data
  */
 QString getQStringHex(QByteArray data);
+
+
+void setNumOnLabel(QLabel *lel,QString str,long num);
+

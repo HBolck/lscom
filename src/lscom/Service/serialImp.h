@@ -94,6 +94,9 @@ public:
     bool isHexSend() const;
     void setIsHexSend(bool newIsHexSend);
 
+signals:
+    void serialRevDataSignal(long data);
+
 public slots:
     /**
      * @brief handleReadyRead

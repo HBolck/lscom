@@ -6,6 +6,7 @@
 #include "Service/serialImp.h"
 #include "Service/logservice.h"
 #include <QTimer>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,7 +23,11 @@ public:
 
     ~lscom();
 
+
 private slots:
+
+    void oSerialReved(long data);
+
     void on_btu_open_com_clicked();
 
     void on_btu_close_com_clicked();
@@ -47,6 +52,30 @@ private:
     bool _sendTimerStart = false;
 
     /**
+     * @brief 接收计数，发送计数
+     */
+    long recConter,sendConter;
+
+    /**
+     * @brief 版本
+     */
+    QLabel *version;
+
+    /**
+     * @brief 源码链接
+     */
+    QLabel *sourceCodelinkLable;
+
+    /**
+     * @brief 接收计数标签
+     */
+    QLabel *recConterLabel;
+    /**
+     * @brief 发送计数标签
+     */
+    QLabel *sendConterLabel;
+
+    /**
      * @brief 初始化页面
      */
     void initView();
@@ -59,5 +88,13 @@ private:
      * @brief 销毁定时器
      */
     void distoryTimer();
+
+
+    /**
+     * @brief 初始化状态栏
+     */
+    void initStatusBar();
+
+
 };
 #endif // LSCOM_H

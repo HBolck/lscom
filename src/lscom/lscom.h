@@ -44,6 +44,8 @@ private slots:
 
     void on_cb_time_send_clicked(bool checked);
 
+    void on_btu_set_param_clicked();
+
 private:
     Ui::lscom *ui;
     serialImp *serial;

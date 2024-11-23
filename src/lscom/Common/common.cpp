@@ -33,3 +33,36 @@ void setNumOnLabel(QLabel *lel, QString str, long num)
 {
     lel->setText(str + QString::number(num));
 }
+
+
+QString mapToJson(const QMap<QString, QString> &map)
+{
+    QJsonObject jsonObject;
+    for(auto it = map.begin();it != map.end();++it){
+        jsonObject[it.key()] = it.value();
+    }
+    QJsonDocument jsonDoc(jsonObject);
+    return jsonDoc.toJson(QJsonDocument::Compact);
+}
+
+QString configToJson(const Config &config)
+{
+    QJsonObject jsonConfig;
+    QJsonObject jsonParam;
+    jsonParam["SendAreaData"] = config.InputParam.SendAreaData;
+    jsonParam["RevDataToFilePath"] = config.InputParam.RevDataToFilePath;
+    jsonParam["SendInterval"] = config.InputParam.SendInterval;
+    jsonConfig["InputParam"] = jsonParam;
+    QJsonDocument jsonDoc(jsonConfig);
+    return jsonDoc.toJson(QJsonDocument::Compact);
+}
+
+void writeJsonToFile(const QString &fileName, const QString &json)
+{
+    QFile file(fileName);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        QTextStream out(&file);
+        out << json;
+        file.close();
+    }
+}

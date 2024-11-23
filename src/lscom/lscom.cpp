@@ -20,6 +20,7 @@ lscom::lscom(QWidget *parent)
 void lscom::initView()
 {
 
+    this->window()->setWindowTitle(GLOBAL_TITLE);
     initStatusBar();
 
     // 设置默认发送时间间隔
@@ -227,6 +228,18 @@ void lscom::on_cb_time_send_clicked(bool checked)
     }
 }
 
+/**
+ * @brief 保存参数
+ */
+void lscom::on_btu_set_param_clicked()
+{
+    Config config;
+    config.InputParam.RevDataToFilePath = "rev";
+    config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
+    auto json = configToJson(config);
+    writeJsonToFile(GLOBAL_CONFIG_FILE_NAME,json);
+}
+
 lscom::~lscom()
 {
     this->distoryTimer();
@@ -235,6 +248,10 @@ lscom::~lscom()
     delete ui;
 }
 
+/**
+ * @brief 串口接收数据量注册方法
+ * @param data
+ */
 void lscom::oSerialReved(long data)
 {
     setNumOnLabel(recConterLabel, "R:", recConter += data);

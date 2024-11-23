@@ -284,7 +284,7 @@ void serialImp::handleReadyRead()
         {
             log->setTextLog(this->textEdit, data, Rev, Info);
         }
-        this->serialRevDataSignal(data.size());
+        emit this->serialRevDataSignal(data.size());
     }
 }
 

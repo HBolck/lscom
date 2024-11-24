@@ -1,8 +1,8 @@
 #include "logservice.h"
 
-LogService::LogService() {}
+lscom_service::LogService::LogService() {}
 
-void LogService::setTextLog(QTextEdit *textEdit,const char* str,LogType logType,LogLevel logLevel)
+void lscom_service::LogService::setTextLog(QTextEdit *textEdit,const char* str,LogType logType,LogLevel logLevel)
 {
     QDateTime currentDateTime = QDateTime::currentDateTime();
     QString dateTime = currentDateTime.toString("[yyyy-MM-dd hh:mm:ss]");

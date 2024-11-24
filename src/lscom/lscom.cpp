@@ -7,11 +7,9 @@ lscom::lscom(QWidget *parent)
     ui->setupUi(this);
 
     // 构建服务类对象
-    this->log = new LogService();
-    this->serial = new serialImp(log, this->ui->log_text);
+    this->log = new lscom_service::LogService();
+    this->serial = new lscom_service::serialImp(log, this->ui->log_text);
     initView();
-
-    // this->serial->updateRevCountPrt() = &lscom::updateRevConter;
 }
 
 /**
@@ -143,7 +141,7 @@ void lscom::on_btu_open_com_clicked()
         this->ui->btu_open_com->setEnabled(false);
         this->ui->btu_send_data->setEnabled(true);
         this->ui->btu_close_com->setEnabled(true);
-        connect(this->serial, &serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
+        connect(this->serial, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
     }
 }
 
@@ -156,7 +154,7 @@ void lscom::on_btu_close_com_clicked()
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_send_data->setEnabled(false);
     this->ui->btu_close_com->setEnabled(false);
-    disconnect(this->serial, &serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
+    disconnect(this->serial, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
 }
 
 /**
@@ -237,7 +235,7 @@ void lscom::on_btu_set_param_clicked()
     config.InputParam.RevDataToFilePath = "rev";
     config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
     auto json = configToJson(config);
-    writeJsonToFile(GLOBAL_CONFIG_FILE_NAME,json);
+    writeJsonToFile(GLOBAL_CONFIG_FILE_NAME, json);
 }
 
 lscom::~lscom()

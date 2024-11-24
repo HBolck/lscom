@@ -48,8 +48,8 @@ private slots:
 
 private:
     Ui::lscom *ui;
-    serialImp *serial;
-    LogService *log;
+    lscom_service::serialImp *serial;
+    lscom_service::LogService *log;
     QTimer* sendDataTimer;
     bool _sendTimerStart = false;
 

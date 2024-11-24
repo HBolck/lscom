@@ -1,23 +1,23 @@
 #include "serialImp.h"
 #include "qserialport.h"
 
-serialImp::serialImp()
+lscom_service::serialImp::serialImp()
 {
 }
 
-serialImp::serialImp(LogService *log, QTextEdit *textEdit)
+lscom_service::serialImp::serialImp(LogService *log, QTextEdit *textEdit)
 {
 
     this->log = log;
     this->textEdit = textEdit;
 }
 
-std::string serialImp::getDescription()
+std::string lscom_service::serialImp::getDescription()
 {
     return "串口类型的服务";
 }
 
-QStringList serialImp::getSerialPorts()
+QStringList lscom_service::serialImp::getSerialPorts()
 {
     QStringList qSlist;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -28,7 +28,7 @@ QStringList serialImp::getSerialPorts()
     return qSlist;
 }
 
-QStringList serialImp::getSerialBundRates()
+QStringList lscom_service::serialImp::getSerialBundRates()
 {
     QStringList qslist;
     qslist.append("1200");
@@ -42,7 +42,7 @@ QStringList serialImp::getSerialBundRates()
     return qslist;
 }
 
-QStringList serialImp::getSerialDataBits()
+QStringList lscom_service::serialImp::getSerialDataBits()
 {
     QStringList qslist;
     for (const auto &piar : dataBitsMap)
@@ -52,7 +52,7 @@ QStringList serialImp::getSerialDataBits()
     return qslist;
 }
 
-QStringList serialImp::getSerialStopBits()
+QStringList lscom_service::serialImp::getSerialStopBits()
 {
     QStringList qslist;
     for (const auto &piar : stopBitsMap)
@@ -62,7 +62,7 @@ QStringList serialImp::getSerialStopBits()
     return qslist;
 }
 
-QStringList serialImp::getSerialParity()
+QStringList lscom_service::serialImp::getSerialParity()
 {
     QStringList qslist;
     qslist.append("None");
@@ -76,7 +76,7 @@ QStringList serialImp::getSerialParity()
  * @param baudRateStr
  * @return
  */
-QSerialPort::BaudRate serialImp::mathBaudRate(const QString &baudRateStr)
+QSerialPort::BaudRate lscom_service::serialImp::mathBaudRate(const QString &baudRateStr)
 {
     auto it = baudRateMap.find(baudRateStr);
     if (it != baudRateMap.end())
@@ -90,7 +90,7 @@ QSerialPort::BaudRate serialImp::mathBaudRate(const QString &baudRateStr)
     }
 }
 
-QSerialPort::DataBits serialImp::mathDataBits(const QString &str)
+QSerialPort::DataBits lscom_service::serialImp::mathDataBits(const QString &str)
 {
     auto it = dataBitsMap.find(str);
     if (it != dataBitsMap.end())
@@ -104,7 +104,7 @@ QSerialPort::DataBits serialImp::mathDataBits(const QString &str)
     }
 }
 
-QSerialPort::StopBits serialImp::mathStopBits(const QString &str)
+QSerialPort::StopBits lscom_service::serialImp::mathStopBits(const QString &str)
 {
     auto it = stopBitsMap.find(str);
     if (it != stopBitsMap.end())
@@ -118,7 +118,7 @@ QSerialPort::StopBits serialImp::mathStopBits(const QString &str)
     }
 }
 
-QSerialPort::Parity serialImp::mathParity(const QString &str)
+QSerialPort::Parity lscom_service::serialImp::mathParity(const QString &str)
 {
     auto it = parityMap.find(str);
     if (it != parityMap.end())
@@ -132,22 +132,22 @@ QSerialPort::Parity serialImp::mathParity(const QString &str)
     }
 }
 
-bool serialImp::isHexSend() const
+bool lscom_service::serialImp::isHexSend() const
 {
     return _isHexSend;
 }
 
-void serialImp::setIsHexSend(bool newIsHexSend)
+void lscom_service::serialImp::setIsHexSend(bool newIsHexSend)
 {
     _isHexSend = newIsHexSend;
 }
 
-bool serialImp::isHexDisplay() const
+bool lscom_service::serialImp::isHexDisplay() const
 {
     return _isHexDisplay;
 }
 
-void serialImp::setIsHexDisplay(bool newIsHexDisplay)
+void lscom_service::serialImp::setIsHexDisplay(bool newIsHexDisplay)
 {
     _isHexDisplay = newIsHexDisplay;
 }
@@ -156,7 +156,7 @@ void serialImp::setIsHexDisplay(bool newIsHexDisplay)
  * @brief 初始化串口对象参数
  * @param config
  */
-void serialImp::initSerialPortInstance(SerialPortConfig config)
+void lscom_service::serialImp::initSerialPortInstance(SerialPortConfig config)
 {
     this->_serialPort.setBaudRate(config.Baudrate);
     this->_serialPort.setDataBits(config.DataBits);
@@ -170,7 +170,7 @@ void serialImp::initSerialPortInstance(SerialPortConfig config)
  * @brief 是否连接
  * @return
  */
-bool serialImp::isConnected()
+bool lscom_service::serialImp::isConnected()
 {
     return this->_serialPort.isOpen();
 }
@@ -178,7 +178,7 @@ bool serialImp::isConnected()
 /**
  * @brief 打开串口
  */
-void serialImp::openPort()
+void lscom_service::serialImp::openPort()
 {
     if ((this->isConnected() == false) && this->_isConfiged)
     {
@@ -229,7 +229,7 @@ void serialImp::openPort()
 /**
  * @brief 关闭串口
  */
-void serialImp::closePort()
+void lscom_service::serialImp::closePort()
 {
     if (this->isConnected())
     {
@@ -247,7 +247,7 @@ void serialImp::closePort()
  * @brief 发送数据
  * @param data
  */
-void serialImp::sendData(QByteArray data)
+void lscom_service::serialImp::sendData(QByteArray data)
 {
 
     if (_isHexSend)
@@ -263,7 +263,7 @@ void serialImp::sendData(QByteArray data)
         this->_serialPort.write(data);
 }
 
-void serialImp::handleReadyRead()
+void lscom_service::serialImp::handleReadyRead()
 {
     QSerialPort *serial = qobject_cast<QSerialPort *>(sender());
     if (serial)
@@ -288,7 +288,7 @@ void serialImp::handleReadyRead()
     }
 }
 
-serialImp::~serialImp()
+lscom_service::serialImp::~serialImp()
 {
     this->closePort();
 }

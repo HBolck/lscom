@@ -4,11 +4,11 @@
 #include "qtextedit.h"
 #include "qdatetime.h"
 
-
 /**
  * @brief 日志等级枚举
  */
-enum LogLevel{
+enum LogLevel
+{
     Info,
     Warning,
     Error,
@@ -18,20 +18,22 @@ enum LogLevel{
 /**
  * @brief 日志类型枚举
  */
-enum LogType{
+enum LogType
+{
     Rev,
     Send,
-    //内部类型
+    // 内部类型
     Inner
 };
 
-
-
-class LogService
+namespace lscom_service
 {
-public:
-    LogService();
-    void setTextLog(QTextEdit *textEdit,const char* str,LogType logType = Inner,LogLevel logLevel = Info);
-};
 
+    class LogService
+    {
+    public:
+        LogService();
+        void setTextLog(QTextEdit *textEdit, const char *str, LogType logType = Inner, LogLevel logLevel = Info);
+    };
+}
 #endif // LOGSERVICE_H

@@ -12,7 +12,6 @@ CONFIG += c++17
 
 SOURCES += \
     Common/common.cpp \
-    Service/deploy.cpp \
     Service/logservice.cpp \
     Service/serialImp.cpp \
     main.cpp \
@@ -20,7 +19,6 @@ SOURCES += \
 
 HEADERS += \
     Common/common.h \
-    Service/deploy.h \
     Service/logservice.h \
     Service/serialImp.h \
     lscom.h

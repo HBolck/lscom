@@ -3,6 +3,8 @@
 
 #include "Service/logservice.h"
 #include "Service/serialImp.h"
+#include "Service/configservice.h"
+
 
 namespace lscom_service
 {
@@ -14,6 +16,7 @@ namespace lscom_service
         ServiceAdapter(QTextEdit *textEdit);
         lscom_service::serialImp *serialService;
         lscom_service::LogService *logService;
+        lscom_service::ConfigService *configService;
 
         ~ServiceAdapter();
     };

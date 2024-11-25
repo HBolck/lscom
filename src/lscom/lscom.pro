@@ -12,6 +12,7 @@ CONFIG += c++17
 
 SOURCES += \
     Common/common.cpp \
+    Service/configservice.cpp \
     Service/logservice.cpp \
     Service/serialImp.cpp \
     Service/serviceadapter.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     Common/common.h \
     Port/PortBase.h \
+    Service/configservice.h \
     Service/logservice.h \
     Service/serialImp.h \
     Service/serviceadapter.h \

@@ -14,19 +14,12 @@
 
 #endif // COMMON_H
 
-/**
- * @brief 标题
- */
-const QString GLOBAL_TITLE = "lscom串口工具";
-/**
- * @brief 默认参数保存路径
- */
-const QString GLOBAL_CONFIG_PATH = "//json";
-
-/**
- * @brief 默认参数保存文件名称
- */
-const QString GLOBAL_CONFIG_FILE_NAME = "lscom.json";
+//默认标题
+#define GLOBAL_TITLE "lscom串口工具"
+//默认配置文件名称
+#define GLOBAL_CONFIG_FILE_NAME "lscom.json"
+//源码地址
+#define GLOBAL_CODE_SOURCE_URL "https://gitee.com/hblockd/lscom"
 
 
 

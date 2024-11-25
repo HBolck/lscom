@@ -48,7 +48,10 @@ void lscom::initStatusBar()
     // 源码链接描述
     sourceCodelinkLable = new QLabel(this);
     sourceCodelinkLable->setOpenExternalLinks(true);
-    sourceCodelinkLable->setText("<style> a {text-decoration: none} </style> <a href=\"https://gitee.com/hblockd/lscom\">源代码");
+    QString link = "<style> a {text-decoration: none} </style> <a href=";
+    link.append(GLOBAL_CODE_SOURCE_URL);
+    link.append(">源代码");
+    sourceCodelinkLable->setText(link);
     sourceCodelinkLable->setMinimumSize(40, 20);
 
     this->ui->statusbar->addWidget(sourceCodelinkLable);

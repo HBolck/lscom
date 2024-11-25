@@ -14,6 +14,7 @@ SOURCES += \
     Common/common.cpp \
     Service/logservice.cpp \
     Service/serialImp.cpp \
+    Service/serviceadapter.cpp \
     main.cpp \
     lscom.cpp
 
@@ -22,6 +23,7 @@ HEADERS += \
     Port/PortBase.h \
     Service/logservice.h \
     Service/serialImp.h \
+    Service/serviceadapter.h \
     lscom.h
 
 FORMS += \

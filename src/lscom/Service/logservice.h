@@ -3,7 +3,7 @@
 
 #include "qtextedit.h"
 #include "Common/common.h"
-#endif // LOGSERVICE_H
+
 
 /**
  * @brief 日志等级枚举
@@ -37,3 +37,5 @@ namespace lscom_service
         void setTextLog(QTextEdit *textEdit, const char *str, LogType logType = Inner, LogLevel logLevel = Info);
     };
 }
+
+#endif // LOGSERVICE_H

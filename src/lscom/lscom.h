@@ -2,7 +2,7 @@
 #define LSCOM_H
 
 #include <QMainWindow>
-#include "Service/serialImp.h"
+#include "Service/serviceadapter.h"
 #include <QTimer>
 #include <QLabel>
 
@@ -50,8 +50,10 @@ private slots:
 
 private:
     Ui::lscom *ui;
-    lscom_service::serialImp *serial;
-    lscom_service::LogService *log;
+    // lscom_service::serialImp *serial;
+    // lscom_service::LogService *log;
+    lscom_service::ServiceAdapter *serviceAdapter;
+
     QTimer* sendDataTimer;
     bool _sendTimerStart = false;
 

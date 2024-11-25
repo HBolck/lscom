@@ -9,10 +9,10 @@
 #include <QObject>
 #include <QCoreApplication>
 #include "Port/PortBase.h"
+#include "Service/logservice.h"
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
-#endif // SERIALIMP_H
 
 /**
  * @brief The SerialPortConfig
@@ -177,3 +177,4 @@ class serialImp : public QObject,public lscom_port::IPortBase
     };
 }
 
+#endif // SERIALIMP_H

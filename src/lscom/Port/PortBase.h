@@ -1,8 +1,8 @@
 #ifndef PORTBASE_H
 #define PORTBASE_H
 
-#include "Service/logservice.h"
-#endif // PORTBASE_H
+
+
 
 /**
  * @brief 端口类型
@@ -49,3 +49,5 @@ namespace lscom_port
 
 
 }
+
+#endif // PORTBASE_H

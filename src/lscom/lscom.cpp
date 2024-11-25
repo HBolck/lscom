@@ -5,10 +5,8 @@ lscom::lscom(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::lscom)
 {
     ui->setupUi(this);
-
     // 构建服务类对象
-    this->log = new lscom_service::LogService();
-    this->serial = new lscom_service::serialImp(log, this->ui->log_text);
+    this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
     initView();
 }
 
@@ -31,13 +29,13 @@ void lscom::initView()
     this->ui->btu_send_data->setEnabled(false);
     // 初始化串口参数
     ui->comPortBox->clear();
-    ui->comPortBox->addItems(serial->getSerialPorts());
-    ui->comboBox_BaudRate->addItems(serial->getSerialBundRates());
+    ui->comPortBox->addItems( this->serviceAdapter->serialService->getSerialPorts());
+    ui->comboBox_BaudRate->addItems(this->serviceAdapter->serialService->getSerialBundRates());
     ui->comboBox_BaudRate->setCurrentIndex(3); // 9600
-    ui->comboBox_DateBits->addItems(serial->getSerialDataBits());
+    ui->comboBox_DateBits->addItems(this->serviceAdapter->serialService->getSerialDataBits());
     ui->comboBox_DateBits->setCurrentIndex(3); // 8
-    ui->comboBox_StopBits->addItems(serial->getSerialStopBits());
-    ui->comboBox_Parity->addItems(serial->getSerialParity());
+    ui->comboBox_StopBits->addItems(this->serviceAdapter->serialService->getSerialStopBits());
+    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());
 }
 
 /**
@@ -84,14 +82,14 @@ void lscom::initTimer()
     QString sendperiodTime = this->ui->sendperiod->text();
     if (sendperiodTime.isEmpty())
     {
-        this->log->setTextLog(this->ui->log_text, "时间间隔不能为空！", Inner, Error);
+        this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔不能为空！", Inner, Error);
         return;
     }
     uint interval;
     bool flag = isQStringToUint(sendperiodTime, &interval);
     if (!flag)
     {
-        this->log->setTextLog(this->ui->log_text, "时间间隔格式错误！", Inner, Error);
+        this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！", Inner, Error);
         return;
     }
     this->sendDataTimer = new QTimer();
@@ -132,19 +130,19 @@ void lscom::distoryTimer()
 void lscom::on_btu_open_com_clicked()
 {
     SerialPortConfig config;
-    config.Baudrate = serial->mathBaudRate(this->ui->comboBox_BaudRate->currentText());
-    config.DataBits = serial->mathDataBits(this->ui->comboBox_DateBits->currentText());
-    config.StopBits = serial->mathStopBits(this->ui->comboBox_StopBits->currentText());
-    config.Parity = serial->mathParity(this->ui->comboBox_Parity->currentText());
+    config.Baudrate = this->serviceAdapter->serialService->mathBaudRate(this->ui->comboBox_BaudRate->currentText());
+    config.DataBits = this->serviceAdapter->serialService->mathDataBits(this->ui->comboBox_DateBits->currentText());
+    config.StopBits = this->serviceAdapter->serialService->mathStopBits(this->ui->comboBox_StopBits->currentText());
+    config.Parity = this->serviceAdapter->serialService->mathParity(this->ui->comboBox_Parity->currentText());
     config.PortName = this->ui->comPortBox->currentText();
-    this->serial->initSerialPortInstance(config);
-    this->serial->OpenPort();
-    if (this->serial->GetConnectStatus())
+    this->serviceAdapter->serialService->initSerialPortInstance(config);
+    this->serviceAdapter->serialService->OpenPort();
+    if (this->serviceAdapter->serialService->GetConnectStatus())
     {
         this->ui->btu_open_com->setEnabled(false);
         this->ui->btu_send_data->setEnabled(true);
         this->ui->btu_close_com->setEnabled(true);
-        connect(this->serial, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
+        connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
     }
 }
 
@@ -153,11 +151,11 @@ void lscom::on_btu_open_com_clicked()
  */
 void lscom::on_btu_close_com_clicked()
 {
-    this->serial->ClosePort();
+    this->serviceAdapter->serialService->ClosePort();
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_send_data->setEnabled(false);
     this->ui->btu_close_com->setEnabled(false);
-    disconnect(this->serial, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
+    disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
 }
 
 /**
@@ -168,8 +166,8 @@ void lscom::on_btu_send_data_clicked()
     auto data = this->ui->text_send->toPlainText();
     if (data.isEmpty())
         return;
-    this->log->setTextLog(this->ui->log_text, data.toUtf8().constData(), Send, Info);
-    this->serial->sendData(data.toUtf8());
+    this->serviceAdapter->logService->setTextLog(this->ui->log_text, data.toUtf8().constData(), Send, Info);
+    this->serviceAdapter->serialService->sendData(data.toUtf8());
     setNumOnLabel(sendConterLabel, "S:", sendConter += data.toUtf8().size());
 }
 
@@ -199,7 +197,7 @@ void lscom::on_btu_clear_send_text_clicked()
  */
 void lscom::on_cb_hex_display_clicked(bool checked)
 {
-    this->serial->setIsHexDisplay(checked);
+    this->serviceAdapter->serialService->setIsHexDisplay(checked);
 }
 /**
  * @brief hex发送勾选事件
@@ -207,7 +205,7 @@ void lscom::on_cb_hex_display_clicked(bool checked)
  */
 void lscom::on_cb_hex_send_clicked(bool checked)
 {
-    this->serial->setIsHexSend(checked);
+    this->serviceAdapter->serialService->setIsHexSend(checked);
 }
 
 /**
@@ -216,7 +214,7 @@ void lscom::on_cb_hex_send_clicked(bool checked)
  */
 void lscom::on_cb_time_send_clicked(bool checked)
 {
-    if (this->serial->GetConnectStatus())
+    if (this->serviceAdapter->serialService->GetConnectStatus())
     {
         if (checked)
         {
@@ -244,8 +242,7 @@ void lscom::on_btu_set_param_clicked()
 lscom::~lscom()
 {
     this->distoryTimer();
-    delete serial;
-    delete log;
+    delete serviceAdapter;
     delete ui;
 }
 

@@ -176,6 +176,11 @@ bool lscom_service::serialImp::GetConnectStatus()
     return this->_serialPort.isOpen();
 }
 
+PortType lscom_service::serialImp::getProtType() const
+{
+    return RTU;
+}
+
 /**
  * @brief 打开串口
  */

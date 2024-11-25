@@ -172,6 +172,8 @@ class serialImp : public QObject,public lscom_port::IPortBase
         void OpenPort() override;
         void ClosePort() override;
         bool GetConnectStatus() override;
+        PortType getProtType() const override;
+
     };
 }
 

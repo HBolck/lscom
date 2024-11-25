@@ -1,14 +1,23 @@
 #ifndef PORTBASE_H
 #define PORTBASE_H
 
-
 #include "Service/logservice.h"
 #endif // PORTBASE_H
+
+/**
+ * @brief 端口类型
+ */
+enum PortType
+{
+    RTU,
+    TCP,
+    UDP
+};
 
 namespace lscom_port
 {
 
-/**
+    /**
      * @brief 端口行为接口
      */
     class IPortBase
@@ -28,6 +37,15 @@ namespace lscom_port
          */
         virtual bool GetConnectStatus() = 0;
 
+        /**
+         * @brief 获取端口类型
+         * @return
+         */
+        virtual PortType getProtType() const = 0;
+
+    protected:
+        PortType protType;
     };
+
 
 }

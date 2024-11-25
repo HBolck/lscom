@@ -15,7 +15,16 @@ namespace lscom_service
         ~ConfigService();
 
     public:
+        /**
+         * @brief 初始化配置文件
+         * @return
+         */
         Config InitConfigFile();
+        /**
+         * @brief WriteConfigToFile
+         * @param config
+         */
+        void WriteConfigToFile(Config &config);
     };
 }
 #endif // CONFIGSERVICE_H

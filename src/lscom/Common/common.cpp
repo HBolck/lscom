@@ -67,3 +67,54 @@ void writeJsonToFile(const QString &fileName, const QString &json)
         file.close();
     }
 }
+
+bool checkFileExist(const QString &fileName)
+{
+    if(fileName.isNull())return false;
+    if (fileName.isEmpty())return false;
+
+    QFile file(fileName);
+    return file.exists();
+}
+
+/**
+ * @brief 读取文件到QString
+ * @param fileName
+ * @return
+ */
+QString readFileContents(const QString &fileName)
+{
+    if(fileName.isNull())return "";
+    if (fileName.isEmpty())return "";
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return QString();
+    }
+
+    QTextStream in(&file);
+    QString contents = in.readAll();
+    file.close();
+
+    return contents;
+}
+
+bool jsonToConfig(const QString &jsonStr, Config &config)
+{
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonStr.toUtf8());
+    if (!jsonDoc.isObject()) {
+        return false;
+    }
+
+    QJsonObject jsonObj = jsonDoc.object();
+    if (!jsonObj.contains("InputParam")) {
+        return false;
+    }
+
+    QJsonObject inputParamObj = jsonObj.value("InputParam").toObject();
+    config.InputParam.RevDataToFilePath = inputParamObj.value("RevDataToFilePath").toString();
+    config.InputParam.SendAreaData = inputParamObj.value("SendAreaData").toString();
+    config.InputParam.SendInterval = inputParamObj.value("SendInterval").toString();
+
+    return true;
+}

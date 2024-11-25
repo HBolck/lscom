@@ -7,6 +7,10 @@ lscom::lscom(QWidget *parent)
     ui->setupUi(this);
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
+
+    Config config = this->serviceAdapter->configService->InitConfigFile();
+    this->ui->sendperiod->setText(config.InputParam.SendInterval);
+    this->ui->text_send->setText(config.InputParam.SendAreaData);
     initView();
 }
 
@@ -19,8 +23,6 @@ void lscom::initView()
     this->window()->setWindowTitle(GLOBAL_TITLE);
     initStatusBar();
 
-    // 设置默认发送时间间隔
-    this->ui->sendperiod->setText("1000");
     // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
     // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
@@ -29,7 +31,7 @@ void lscom::initView()
     this->ui->btu_send_data->setEnabled(false);
     // 初始化串口参数
     ui->comPortBox->clear();
-    ui->comPortBox->addItems( this->serviceAdapter->serialService->getSerialPorts());
+    ui->comPortBox->addItems(this->serviceAdapter->serialService->getSerialPorts());
     ui->comboBox_BaudRate->addItems(this->serviceAdapter->serialService->getSerialBundRates());
     ui->comboBox_BaudRate->setCurrentIndex(3); // 9600
     ui->comboBox_DateBits->addItems(this->serviceAdapter->serialService->getSerialDataBits());
@@ -233,10 +235,11 @@ void lscom::on_cb_time_send_clicked(bool checked)
 void lscom::on_btu_set_param_clicked()
 {
     Config config;
-    config.InputParam.RevDataToFilePath = "rev";
+    // config.InputParam.RevDataToFilePath = "rev";
     config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
-    auto json = configToJson(config);
-    writeJsonToFile(GLOBAL_CONFIG_FILE_NAME, json);
+    config.InputParam.SendInterval = this->ui->sendperiod->text();
+    this->serviceAdapter->configService->WriteConfigToFile(config);
+    this->serviceAdapter->logService->setTextLog(this->ui->log_text,"保存成功",Inner,Info);
 }
 
 lscom::~lscom()

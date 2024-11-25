@@ -12,8 +12,6 @@
 #include <QTextStream>
 
 
-#endif // COMMON_H
-
 //默认标题
 #define GLOBAL_TITLE "lscom串口工具"
 //默认配置文件名称
@@ -105,8 +103,7 @@ void writeJsonToFile(const QString &fileName,const QString &json);
 
 
 
-
-
+#endif // COMMON_H
 
 
 

@@ -4,11 +4,12 @@
 
 lscom_service::serialImp::serialImp()
 {
+    this->protType = RTU;
 }
 
 lscom_service::serialImp::serialImp(LogService *log, QTextEdit *textEdit)
 {
-
+    this->protType = RTU;
     this->log = log;
     this->textEdit = textEdit;
 }
@@ -178,7 +179,7 @@ bool lscom_service::serialImp::GetConnectStatus()
 
 PortType lscom_service::serialImp::getProtType() const
 {
-    return RTU;
+    return this->protType;
 }
 
 /**

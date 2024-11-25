@@ -2,11 +2,13 @@
 #define LSCOM_H
 
 #include <QMainWindow>
-#include "Common/common.h"
 #include "Service/serialImp.h"
-#include "Service/logservice.h"
 #include <QTimer>
 #include <QLabel>
+
+#endif // LSCOM_H
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -99,4 +101,4 @@ private:
 
 
 };
-#endif // LSCOM_H
+

@@ -1,7 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#endif // COMMON_H
 #include <QCoreApplication>
 #include <QLabel>
 
@@ -11,6 +10,9 @@
 #include <QString>
 #include <QFile>
 #include <QTextStream>
+
+
+#endif // COMMON_H
 
 /**
  * @brief 标题

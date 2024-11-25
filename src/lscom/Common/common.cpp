@@ -34,11 +34,11 @@ void setNumOnLabel(QLabel *lel, QString str, long num)
     lel->setText(str + QString::number(num));
 }
 
-
 QString mapToJson(const QMap<QString, QString> &map)
 {
     QJsonObject jsonObject;
-    for(auto it = map.begin();it != map.end();++it){
+    for (auto it = map.begin(); it != map.end(); ++it)
+    {
         jsonObject[it.key()] = it.value();
     }
     QJsonDocument jsonDoc(jsonObject);
@@ -60,7 +60,8 @@ QString configToJson(const Config &config)
 void writeJsonToFile(const QString &fileName, const QString &json)
 {
     QFile file(fileName);
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text)){
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
         QTextStream out(&file);
         out << json;
         file.close();

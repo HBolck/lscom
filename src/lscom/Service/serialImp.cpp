@@ -1,5 +1,6 @@
 #include "serialImp.h"
 #include "qserialport.h"
+#include <iostream>
 
 lscom_service::serialImp::serialImp()
 {

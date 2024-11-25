@@ -1,6 +1,7 @@
 #ifndef SERIALIMP_H
 #define SERIALIMP_H
-#include <iostream>
+
+
 #include <windows.h>
 #include <QMainWindow>
 #include <QDebug>
@@ -10,6 +11,8 @@
 #include "Service/logservice.h"
 #include <QSerialPort>
 #include <QSerialPortInfo>
+
+#endif // SERIALIMP_H
 
 /**
  * @brief The SerialPortConfig
@@ -167,4 +170,4 @@ namespace lscom_service
             {"Even", QSerialPort::OddParity}};
     };
 }
-#endif // SERIALIMP_H
+

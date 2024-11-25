@@ -1,5 +1,5 @@
 #include "logservice.h"
-
+#include "qdatetime.h"
 lscom_service::LogService::LogService() {}
 
 void lscom_service::LogService::setTextLog(QTextEdit *textEdit,const char* str,LogType logType,LogLevel logLevel)

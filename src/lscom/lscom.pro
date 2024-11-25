@@ -19,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     Common/common.h \
+    Port/PortBase.h \
     Service/logservice.h \
     Service/serialImp.h \
     lscom.h

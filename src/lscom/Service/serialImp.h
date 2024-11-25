@@ -8,7 +8,7 @@
 #include <map>
 #include <QObject>
 #include <QCoreApplication>
-#include "Service/logservice.h"
+#include "Port/PortBase.h"
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
@@ -45,7 +45,7 @@ struct SerialPortConfig
 namespace lscom_service
 {
 
-    class serialImp : public QObject
+class serialImp : public QObject,public lscom_port::IPortBase
     {
         Q_OBJECT
 
@@ -87,9 +87,7 @@ namespace lscom_service
          * @brief 初始化串口
          */
         void initSerialPortInstance(SerialPortConfig config);
-        bool isConnected();
-        void openPort();
-        void closePort();
+
         void sendData(QByteArray data);
 
         ~serialImp();
@@ -168,6 +166,12 @@ namespace lscom_service
             {"None", QSerialPort::NoParity},
             {"Odd", QSerialPort::EvenParity},
             {"Even", QSerialPort::OddParity}};
+
+        // IPortBase interface
+    public:
+        void OpenPort() override;
+        void ClosePort() override;
+        bool GetConnectStatus() override;
     };
 }
 

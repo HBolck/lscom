@@ -135,8 +135,8 @@ void lscom::on_btu_open_com_clicked()
     config.Parity = serial->mathParity(this->ui->comboBox_Parity->currentText());
     config.PortName = this->ui->comPortBox->currentText();
     this->serial->initSerialPortInstance(config);
-    this->serial->openPort();
-    if (this->serial->isConnected())
+    this->serial->OpenPort();
+    if (this->serial->GetConnectStatus())
     {
         this->ui->btu_open_com->setEnabled(false);
         this->ui->btu_send_data->setEnabled(true);
@@ -150,7 +150,7 @@ void lscom::on_btu_open_com_clicked()
  */
 void lscom::on_btu_close_com_clicked()
 {
-    this->serial->closePort();
+    this->serial->ClosePort();
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_send_data->setEnabled(false);
     this->ui->btu_close_com->setEnabled(false);
@@ -213,7 +213,7 @@ void lscom::on_cb_hex_send_clicked(bool checked)
  */
 void lscom::on_cb_time_send_clicked(bool checked)
 {
-    if (this->serial->isConnected())
+    if (this->serial->GetConnectStatus())
     {
         if (checked)
         {

@@ -171,7 +171,7 @@ void lscom_service::serialImp::initSerialPortInstance(SerialPortConfig config)
  * @brief 是否连接
  * @return
  */
-bool lscom_service::serialImp::isConnected()
+bool lscom_service::serialImp::GetConnectStatus()
 {
     return this->_serialPort.isOpen();
 }
@@ -179,15 +179,15 @@ bool lscom_service::serialImp::isConnected()
 /**
  * @brief 打开串口
  */
-void lscom_service::serialImp::openPort()
+void lscom_service::serialImp::OpenPort()
 {
-    if ((this->isConnected() == false) && this->_isConfiged)
+    if ((this->GetConnectStatus() == false) && this->_isConfiged)
     {
         try
         {
             // 设置串口的打开方式（可读可写）
             this->_serialPort.open(QIODevice::ReadWrite);
-            if (this->isConnected())
+            if (this->GetConnectStatus())
             {
                 log->setTextLog(this->textEdit, this->_serialPort.portName().append("端口打开成功").toUtf8().constData(), Inner, Info);
                 connect(&_serialPort, &QSerialPort::readyRead, this, &serialImp::handleReadyRead);
@@ -227,12 +227,14 @@ void lscom_service::serialImp::openPort()
     }
 }
 
+
+
 /**
- * @brief 关闭串口
+ * @brief 关闭端口
  */
-void lscom_service::serialImp::closePort()
+void lscom_service::serialImp::ClosePort()
 {
-    if (this->isConnected())
+    if (this->GetConnectStatus())
     {
         this->_serialPort.close();
         log->setTextLog(this->textEdit, "端口已关闭", Inner, Error);
@@ -243,6 +245,7 @@ void lscom_service::serialImp::closePort()
         log->setTextLog(this->textEdit, "端口没有打开", Inner, Error);
     }
 }
+
 
 /**
  * @brief 发送数据
@@ -291,5 +294,5 @@ void lscom_service::serialImp::handleReadyRead()
 
 lscom_service::serialImp::~serialImp()
 {
-    this->closePort();
+    this->ClosePort();
 }

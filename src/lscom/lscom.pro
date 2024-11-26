@@ -12,6 +12,8 @@ CONFIG += c++17
 
 SOURCES += \
     Common/common.cpp \
+    Delegate/qstylewithbuttondelegate.cpp \
+    Model/sendtablemodel.cpp \
     Service/configservice.cpp \
     Service/logservice.cpp \
     Service/serialImp.cpp \
@@ -21,6 +23,8 @@ SOURCES += \
 
 HEADERS += \
     Common/common.h \
+    Delegate/qstylewithbuttondelegate.h \
+    Model/sendtablemodel.h \
     Port/PortBase.h \
     Service/configservice.h \
     Service/logservice.h \

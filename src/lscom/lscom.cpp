@@ -38,6 +38,29 @@ void lscom::initView()
     ui->comboBox_DateBits->setCurrentIndex(3); // 8
     ui->comboBox_StopBits->addItems(this->serviceAdapter->serialService->getSerialStopBits());
     ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());
+
+
+
+    // 创建 QStandardItemModel 对象来存储数据
+    QStandardItemModel *model = new QStandardItemModel;
+
+    // 设置表头
+    model->setHorizontalHeaderLabels(QStringList() << "数据" << "操作");
+
+    // 向模型中添加数据
+    for (int row = 0; row < 5; ++row) {
+        QList<QStandardItem *> items;
+        for (int col = 0; col < 2; ++col) {
+            QStandardItem *item = new QStandardItem(QString(" %1, %2").arg(row).arg(col));
+            items.append(item);
+        }
+        model->appendRow(items);
+    }
+
+    QStyleWithButtonDelegate* delegate = new QStyleWithButtonDelegate(this);
+    // 将模型设置给 tableView
+    this->ui->tableView->setItemDelegate(delegate);
+    this->ui->tableView->setModel(model);
 }
 
 /**

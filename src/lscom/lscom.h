@@ -5,6 +5,9 @@
 #include "Service/serviceadapter.h"
 #include <QTimer>
 #include <QLabel>
+#include <QTableView>
+#include <QStandardItemModel>
+#include "Delegate/qstylewithbuttondelegate.h"
 
 #endif // LSCOM_H
 

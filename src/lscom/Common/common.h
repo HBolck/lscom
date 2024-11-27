@@ -10,6 +10,7 @@
 #include <QString>
 #include <QFile>
 #include <QTextStream>
+#include <QJsonArray>
 
 // 默认标题
 #define GLOBAL_TITLE "lscom串口工具"
@@ -36,6 +37,11 @@ struct InputParam
      * @brief 定时发送频率
      */
     QString SendInterval;
+
+    /**
+     * @brief 发送数据的集合
+     */
+    QList<QString> SendDataList;
 };
 
 /**

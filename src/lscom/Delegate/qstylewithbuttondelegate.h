@@ -6,9 +6,14 @@
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
 #include <QPushButton>
+#include "Port/PortBase.h"
 
 class QStyleWithButtonDelegate : public QStyledItemDelegate
 {
+
+public:
+    lscom_port::IPortBase *port;
+
 public:
     QStyleWithButtonDelegate(QObject *parent = nullptr) : QStyledItemDelegate(parent) {};
 
@@ -19,6 +24,8 @@ public:
     // QAbstractItemDelegate interface
 public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+
 
 
 };

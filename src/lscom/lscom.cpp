@@ -7,11 +7,12 @@ lscom::lscom(QWidget *parent)
     ui->setupUi(this);
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
-
+    initView();
     Config config = this->serviceAdapter->configService->InitConfigFile();
     this->ui->sendperiod->setText(config.InputParam.SendInterval);
     this->ui->text_send->setText(config.InputParam.SendAreaData);
-    initView();
+    //初始化表格数据内容
+    initTalbeView(config);
 }
 
 /**
@@ -19,10 +20,8 @@ lscom::lscom(QWidget *parent)
  */
 void lscom::initView()
 {
-
     this->window()->setWindowTitle(GLOBAL_TITLE);
-    initStatusBar();
-
+    initStatusBar();    
     // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
     // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
@@ -37,30 +36,7 @@ void lscom::initView()
     ui->comboBox_DateBits->addItems(this->serviceAdapter->serialService->getSerialDataBits());
     ui->comboBox_DateBits->setCurrentIndex(3); // 8
     ui->comboBox_StopBits->addItems(this->serviceAdapter->serialService->getSerialStopBits());
-    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());
-
-
-
-    // 创建 QStandardItemModel 对象来存储数据
-    QStandardItemModel *model = new QStandardItemModel;
-
-    // 设置表头
-    model->setHorizontalHeaderLabels(QStringList() << "数据" << "操作");
-
-    // 向模型中添加数据
-    for (int row = 0; row < 5; ++row) {
-        QList<QStandardItem *> items;
-        for (int col = 0; col < 2; ++col) {
-            QStandardItem *item = new QStandardItem(QString(" %1, %2").arg(row).arg(col));
-            items.append(item);
-        }
-        model->appendRow(items);
-    }
-
-    QStyleWithButtonDelegate* delegate = new QStyleWithButtonDelegate(this);
-    // 将模型设置给 tableView
-    this->ui->tableView->setItemDelegate(delegate);
-    this->ui->tableView->setModel(model);
+    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());   
 }
 
 /**
@@ -96,6 +72,29 @@ void lscom::initStatusBar()
     setNumOnLabel(this->sendConterLabel, "S:", sendConter);
     this->ui->statusbar->addWidget(recConterLabel);
     this->ui->statusbar->addWidget(sendConterLabel);
+}
+
+/**
+ * @brief 初始化数据表格
+ */
+void lscom::initTalbeView(Config &config)
+{
+    // 创建 QStandardItemModel 对象来存储数据
+    QStandardItemModel *model = new QStandardItemModel;
+    // 设置表头
+    model->setHorizontalHeaderLabels(QStringList() << "数据" << "操作");
+    // 向模型中添加数据
+    for (int i = 0; i < config.InputParam.SendDataList.count(); ++i) {
+        QList<QStandardItem *> items;
+        QStandardItem *item = new QStandardItem(QString(config.InputParam.SendDataList[i]));
+        items.append(item);
+        model->appendRow(items);
+    }
+    QStyleWithButtonDelegate *delegate = new QStyleWithButtonDelegate(this);
+    delegate->port = this->serviceAdapter->serialService;
+    // 将模型设置给 tableView
+    this->ui->tableView->setItemDelegate(delegate);
+    this->ui->tableView->setModel(model);
 }
 
 /**
@@ -167,7 +166,8 @@ void lscom::on_btu_open_com_clicked()
         this->ui->btu_open_com->setEnabled(false);
         this->ui->btu_send_data->setEnabled(true);
         this->ui->btu_close_com->setEnabled(true);
-        connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
+        connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
+        connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
     }
 }
 
@@ -180,7 +180,8 @@ void lscom::on_btu_close_com_clicked()
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_send_data->setEnabled(false);
     this->ui->btu_close_com->setEnabled(false);
-    disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::oSerialReved);
+    disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
+    disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
 }
 
 /**
@@ -188,12 +189,7 @@ void lscom::on_btu_close_com_clicked()
  */
 void lscom::on_btu_send_data_clicked()
 {
-    auto data = this->ui->text_send->toPlainText();
-    if (data.isEmpty())
-        return;
-    this->serviceAdapter->logService->setTextLog(this->ui->log_text, data.toUtf8().constData(), Send, Info);
-    this->serviceAdapter->serialService->sendData(data.toUtf8());
-    setNumOnLabel(sendConterLabel, "S:", sendConter += data.toUtf8().size());
+    this->serviceAdapter->serialService->SendData(this->ui->text_send->toPlainText().toUtf8());
 }
 
 /**
@@ -258,11 +254,17 @@ void lscom::on_cb_time_send_clicked(bool checked)
 void lscom::on_btu_set_param_clicked()
 {
     Config config;
-    // config.InputParam.RevDataToFilePath = "rev";
     config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
     config.InputParam.SendInterval = this->ui->sendperiod->text();
+    QList<QString> list;
+    for (int i = 0; i < this->ui->tableView->model()->rowCount(); ++i) {
+        auto index = this->ui->tableView->model()->index(i,0);
+        auto data = this->ui->tableView->model()->data(index);
+        list.append(data.toString());
+    }
+    config.InputParam.SendDataList = list;
     this->serviceAdapter->configService->WriteConfigToFile(config);
-    this->serviceAdapter->logService->setTextLog(this->ui->log_text,"保存成功",Inner,Info);
+    this->serviceAdapter->logService->setTextLog(this->ui->log_text, "保存成功", Inner, Info);
 }
 
 lscom::~lscom()
@@ -273,10 +275,19 @@ lscom::~lscom()
 }
 
 /**
- * @brief 串口接收数据量注册方法
+ * @brief 接收数据量注册方法
  * @param data
  */
-void lscom::oSerialReved(long data)
+void lscom::onPortDataReved(long data)
 {
     setNumOnLabel(recConterLabel, "R:", recConter += data);
+}
+
+/**
+ * @brief 发送数据量注册方法
+ * @param data
+ */
+void lscom::onPortDataSend(long data)
+{
+    setNumOnLabel(sendConterLabel, "S:", sendConter += data);
 }

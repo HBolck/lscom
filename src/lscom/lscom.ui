@@ -215,7 +215,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>561</width>
+      <width>621</width>
       <height>341</height>
      </rect>
     </property>
@@ -452,9 +452,9 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QTableView" name="tableView">
     <property name="geometry">
      <rect>
-      <x>560</x>
+      <x>620</x>
       <y>0</y>
-      <width>291</width>
+      <width>231</width>
       <height>341</height>
      </rect>
     </property>
@@ -466,7 +466,7 @@ border-color: rgb(98, 98, 98);</string>
      <x>0</x>
      <y>0</y>
      <width>855</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

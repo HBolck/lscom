@@ -233,8 +233,6 @@ void lscom_service::serialImp::OpenPort()
     }
 }
 
-
-
 /**
  * @brief 关闭端口
  */
@@ -252,35 +250,43 @@ void lscom_service::serialImp::ClosePort()
     }
 }
 
-
 /**
  * @brief 发送数据
  * @param data
  */
-void lscom_service::serialImp::sendData(QByteArray data)
+void lscom_service::serialImp::SendData(QByteArray data)
 {
-
-    if (_isHexSend)
+    if (this->GetConnectStatus())
     {
-        QString hexString;
-        for (char byte : data)
+        if (data.isEmpty())
+            return;
+        if (_isHexSend)
         {
-            hexString.append(QString("%1 ").arg(static_cast<quint8>(byte), 2, 16, QChar('0').toUpper()));
+            QString hexString;
+            for (char byte : data)
+            {
+                hexString.append(QString("%1 ").arg(static_cast<quint8>(byte), 2, 16, QChar('0').toUpper()));
+            }
+            this->_serialPort.write(hexString.toUtf8());
         }
-        this->_serialPort.write(hexString.toUtf8());
+        else
+            this->_serialPort.write(data);
+        log->setTextLog(textEdit, data, Send, Info);
+        // 激发信号
+        emit this->serialSendDataSignal(data.size());
     }
-    else
-        this->_serialPort.write(data);
 }
 
+/**
+ * @brief 接收数据内容
+ */
 void lscom_service::serialImp::handleReadyRead()
 {
     QSerialPort *serial = qobject_cast<QSerialPort *>(sender());
     if (serial)
     {
         QByteArray data = serial->readAll();
-        qDebug() << "Received data: " << data;
-
+        // qDebug() << "Received data: " << data;
         if (_isHexDisplay)
         {
             QString hexString;

@@ -5,6 +5,9 @@
 #include "Service/serviceadapter.h"
 #include <QTimer>
 #include <QLabel>
+#include <QTableView>
+#include <QStandardItemModel>
+#include "Delegate/qstylewithbuttondelegate.h"
 
 #endif // LSCOM_H
 
@@ -28,7 +31,9 @@ public:
 
 private slots:
 
-    void oSerialReved(long data);
+    void onPortDataReved(long data);
+
+    void onPortDataSend(long data);
 
     void on_btu_open_com_clicked();
 
@@ -95,12 +100,14 @@ private:
      */
     void distoryTimer();
 
-
     /**
      * @brief 初始化状态栏
      */
     void initStatusBar();
 
-
+    /**
+     * @brief 初始化数据表格
+     */
+    void initTalbeView(Config &config);
 };
 

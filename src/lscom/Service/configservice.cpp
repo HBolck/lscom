@@ -17,6 +17,11 @@ Config lscom_service::ConfigService::InitConfigFile()
     config.InputParam.RevDataToFilePath = "Rev";
     config.InputParam.SendAreaData = GLOBAL_CODE_SOURCE_URL;
     config.InputParam.SendInterval = "1000";
+    QList<QString> list;
+    for (int var = 0; var < 10; ++var) {
+        list.append(QString("双击添加数据"));
+    }
+    config.InputParam.SendDataList = list;
     if (checkFileExist(GLOBAL_CONFIG_FILE_NAME) == false)
     {
         this->WriteConfigToFile(config);
@@ -39,7 +44,6 @@ Config lscom_service::ConfigService::InitConfigFile()
                 this->WriteConfigToFile(config);
                 return config;
             }
-
         }
     }
     return config;

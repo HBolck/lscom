@@ -59,7 +59,7 @@
        <x>70</x>
        <y>30</y>
        <width>141</width>
-       <height>21</height>
+       <height>27</height>
       </rect>
      </property>
     </widget>
@@ -215,7 +215,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>851</width>
+      <width>621</width>
       <height>341</height>
      </rect>
     </property>
@@ -300,19 +300,6 @@ border-color: rgb(98, 98, 98);</string>
      <string>清发送区</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>340</y>
-      <width>61</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>最前</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_time_send">
     <property name="geometry">
      <rect>
@@ -329,7 +316,7 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QPushButton" name="btu_set_param">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>630</x>
       <y>340</y>
       <width>81</width>
       <height>28</height>
@@ -460,6 +447,16 @@ border-color: rgb(98, 98, 98);</string>
     </property>
     <property name="text">
      <string>选择路径</string>
+    </property>
+   </widget>
+   <widget class="QTableView" name="tableView">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>0</y>
+      <width>231</width>
+      <height>341</height>
+     </rect>
     </property>
    </widget>
   </widget>

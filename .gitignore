@@ -56,3 +56,4 @@ compile_commands.json
 **/release/*
 .qtc_clangd
 .qmake.stash
+lscom.json

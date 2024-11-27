@@ -1,7 +1,7 @@
 #ifndef PORTBASE_H
 #define PORTBASE_H
 
-
+#include <QCoreApplication>
 
 
 /**
@@ -42,6 +42,8 @@ namespace lscom_port
          * @return
          */
         virtual PortType getProtType() const = 0;
+
+        virtual void SendData(QByteArray data) = 0;
 
     protected:
         PortType protType;

@@ -52,6 +52,12 @@ QString configToJson(const Config &config)
     jsonParam["SendAreaData"] = config.InputParam.SendAreaData;
     jsonParam["RevDataToFilePath"] = config.InputParam.RevDataToFilePath;
     jsonParam["SendInterval"] = config.InputParam.SendInterval;
+    QJsonArray dataList;
+    for (const QString &str : config.InputParam.SendDataList)
+    {
+        dataList.append(str);
+    }
+    jsonParam["SendDataList"] = dataList;
     jsonConfig["InputParam"] = jsonParam;
     QJsonDocument jsonDoc(jsonConfig);
     return jsonDoc.toJson(QJsonDocument::Compact);
@@ -70,8 +76,10 @@ void writeJsonToFile(const QString &fileName, const QString &json)
 
 bool checkFileExist(const QString &fileName)
 {
-    if(fileName.isNull())return false;
-    if (fileName.isEmpty())return false;
+    if (fileName.isNull())
+        return false;
+    if (fileName.isEmpty())
+        return false;
 
     QFile file(fileName);
     return file.exists();
@@ -84,11 +92,14 @@ bool checkFileExist(const QString &fileName)
  */
 QString readFileContents(const QString &fileName)
 {
-    if(fileName.isNull())return "";
-    if (fileName.isEmpty())return "";
+    if (fileName.isNull())
+        return "";
+    if (fileName.isEmpty())
+        return "";
     QFile file(fileName);
 
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         return QString();
     }
 
@@ -102,12 +113,14 @@ QString readFileContents(const QString &fileName)
 bool jsonToConfig(const QString &jsonStr, Config &config)
 {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonStr.toUtf8());
-    if (!jsonDoc.isObject()) {
+    if (!jsonDoc.isObject())
+    {
         return false;
     }
 
     QJsonObject jsonObj = jsonDoc.object();
-    if (!jsonObj.contains("InputParam")) {
+    if (!jsonObj.contains("InputParam"))
+    {
         return false;
     }
 
@@ -115,6 +128,18 @@ bool jsonToConfig(const QString &jsonStr, Config &config)
     config.InputParam.RevDataToFilePath = inputParamObj.value("RevDataToFilePath").toString();
     config.InputParam.SendAreaData = inputParamObj.value("SendAreaData").toString();
     config.InputParam.SendInterval = inputParamObj.value("SendInterval").toString();
-
+    QList<QString> list;
+    if(inputParamObj.contains("SendDataList") && inputParamObj.value("SendDataList").isArray()){
+        QJsonArray array = inputParamObj.value("SendDataList").toArray();
+        for(const auto &value : array){
+            list.append(value.toString());
+        }
+        config.InputParam.SendDataList = list;
+    }
     return true;
 }
+
+
+
+
+

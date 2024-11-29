@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <QJsonArray>
+#include <QFileDialog>
 
 // 默认标题
 #define GLOBAL_TITLE "lscom串口工具"
@@ -123,13 +124,22 @@ bool jsonToConfig(const QString &jsonStr, Config &config);
 QString readFileContents(const QString &fileName);
 
 /**
+ * @brief 读取文件到列表
+ */
+QList<QString> readFileContentList(const QString &fileName);
+
+/**
  * @brief 检查文件是否存在
  * @param fileName
  * @return
  */
 bool checkFileExist(const QString &fileName);
 
-
+/**
+ * @brief 检查文件目录 如果不存在就创建
+ * @param folderPath
+ * @return
+ */
 bool createFolderIfNotExist(const QString &folderPath);
 
 #endif // COMMON_H

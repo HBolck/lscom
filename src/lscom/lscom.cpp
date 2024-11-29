@@ -249,6 +249,15 @@ void lscom::on_cb_time_send_clicked(bool checked)
 }
 
 /**
+ * @brief 接收数据到文件勾选
+ * @param checked
+ */
+void lscom::on_cB_rev_to_file_clicked(bool checked)
+{
+    this->serviceAdapter->serialService->setIsRevDataToFile(checked);
+}
+
+/**
  * @brief 保存参数
  */
 void lscom::on_btu_set_param_clicked()
@@ -267,11 +276,15 @@ void lscom::on_btu_set_param_clicked()
     this->serviceAdapter->logService->setTextLog(this->ui->log_text, "保存成功", Inner, Info);
 }
 
-lscom::~lscom()
+/**
+ * @brief 打开文件
+ */
+void lscom::on_btu_send_open_file_clicked()
 {
-    this->distoryTimer();
-    delete serviceAdapter;
-    delete ui;
+    QString fileName = QFileDialog::getOpenFileName(nullptr, "打开数据文件", "", "Text Files (*.txt)");
+    if (!fileName.isEmpty()) {
+        this->ui->importFileName->setText(fileName);
+    }
 }
 
 /**
@@ -292,8 +305,17 @@ void lscom::onPortDataSend(long data)
     setNumOnLabel(sendConterLabel, "S:", sendConter += data);
 }
 
-void lscom::on_cB_rev_to_file_clicked(bool checked)
+lscom::~lscom()
 {
-    this->serviceAdapter->serialService->setIsRevDataToFile(checked);
+    this->distoryTimer();
+    delete serviceAdapter;
+    delete ui;
 }
+
+
+
+
+
+
+
 

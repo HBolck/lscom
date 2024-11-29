@@ -24,9 +24,9 @@
     <property name="geometry">
      <rect>
       <x>620</x>
-      <y>380</y>
+      <y>390</y>
       <width>231</width>
-      <height>191</height>
+      <height>181</height>
      </rect>
     </property>
     <property name="title">
@@ -227,9 +227,9 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>400</y>
-      <width>431</width>
-      <height>171</height>
+      <y>370</y>
+      <width>241</width>
+      <height>201</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -258,30 +258,17 @@ border-color: rgb(98, 98, 98);</string>
      <string>清空日志</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btu_send_data_3">
+   <widget class="QPushButton" name="btu_send_open_file">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>440</x>
       <y>340</y>
-      <width>92</width>
+      <width>71</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
      <string>打开文件</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btu_send_data_4">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>340</y>
-      <width>92</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>发送文件</string>
     </property>
    </widget>
    <widget class="QPushButton" name="btu_clear_send_text">
@@ -316,9 +303,9 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QPushButton" name="btu_set_param">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>190</x>
       <y>340</y>
-      <width>81</width>
+      <width>91</width>
       <height>28</height>
      </rect>
     </property>
@@ -380,8 +367,8 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QCheckBox" name="cB_rev_to_file">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>370</y>
+      <x>290</x>
+      <y>340</y>
       <width>111</width>
       <height>25</height>
      </rect>
@@ -413,16 +400,6 @@ border-color: rgb(98, 98, 98);</string>
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="filepath">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>340</y>
-      <width>261</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
@@ -446,6 +423,98 @@ border-color: rgb(98, 98, 98);</string>
      </rect>
     </property>
    </widget>
+   <widget class="QCheckBox" name="cB_pLineSend">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>340</y>
+      <width>71</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>逐行发送</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="pLineInterval">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>340</y>
+      <width>71</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>340</y>
+      <width>41</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ms/行</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btu_send_file">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>340</y>
+      <width>71</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>发送文件</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="text_file_area">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>390</y>
+      <width>171</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(236, 236, 236);
+border-color: rgb(98, 98, 98);</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cB_pLineSend_loop">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>360</y>
+      <width>71</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>循环发送</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="importFileName">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>370</y>
+      <width>141</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -453,7 +522,7 @@ border-color: rgb(98, 98, 98);</string>
      <x>0</x>
      <y>0</y>
      <width>855</width>
-     <height>33</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

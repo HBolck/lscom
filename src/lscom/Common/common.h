@@ -9,6 +9,7 @@
 #include <QVariant>
 #include <QString>
 #include <QFile>
+#include <QDir>
 #include <QTextStream>
 #include <QJsonArray>
 
@@ -53,12 +54,23 @@ struct Config
 };
 
 /**
+ * @brief The TimeFormat enum
+ */
+enum TimeFormat
+{
+    YYMMDDHHmmss,
+    YYMMDDHH,
+    YYMMDD
+};
+
+/**
  * @brief 判断 QString 是否可以转成 uint，并获取转换后的结果
  * @param str 待判断和转换的 QString
  * @param value 用于存储转换结果的 uint 指针
  * @return 转换是否成功
  */
-bool isQStringToUint(const QString &str, uint *value);
+bool
+isQStringToUint(const QString &str, uint *value);
 
 /**
  * @brief 获取QString格式的HEX字符串内容
@@ -116,5 +128,8 @@ QString readFileContents(const QString &fileName);
  * @return
  */
 bool checkFileExist(const QString &fileName);
+
+
+bool createFolderIfNotExist(const QString &folderPath);
 
 #endif // COMMON_H

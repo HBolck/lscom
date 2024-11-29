@@ -94,6 +94,9 @@ namespace lscom_service
           bool isHexSend() const;
           void setIsHexSend(bool newIsHexSend);
 
+          bool isRevDataToFile;
+          void setIsRevDataToFile(bool newIsRevDataToFile);
+
      signals:
           /**
            * @brief 串口接收数据信号
@@ -179,6 +182,7 @@ namespace lscom_service
           bool GetConnectStatus() override;
           PortType getProtType() const override;
           void SendData(QByteArray data) override;
+
      };
 }
 

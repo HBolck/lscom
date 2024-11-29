@@ -1,4 +1,5 @@
 #include "Common/common.h"
+#include "common.h"
 
 /**
  * @brief 判断 QString 是否可以转成 uint，并获取转换后的结果
@@ -85,6 +86,19 @@ bool checkFileExist(const QString &fileName)
     return file.exists();
 }
 
+bool createFolderIfNotExist(const QString &folderPath)
+{
+    QDir dir(folderPath);
+    if (!dir.exists()) {
+        if (dir.mkpath(folderPath)) {
+            return true;
+        } else {
+            qDebug() << "创建文件加失败";
+            return false;
+        }
+    }
+    return true;
+}
 /**
  * @brief 读取文件到QString
  * @param fileName

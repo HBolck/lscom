@@ -154,6 +154,11 @@ void lscom_service::serialImp::setIsHexDisplay(bool newIsHexDisplay)
     _isHexDisplay = newIsHexDisplay;
 }
 
+void lscom_service::serialImp::setIsRevDataToFile(bool newIsRevDataToFile)
+{
+    isRevDataToFile = newIsRevDataToFile;
+}
+
 /**
  * @brief 初始化串口对象参数
  * @param config
@@ -301,6 +306,10 @@ void lscom_service::serialImp::handleReadyRead()
             log->setTextLog(this->textEdit, data, Rev, Info);
         }
         emit this->serialRevDataSignal(data.size());
+        if (this->isRevDataToFile)
+        {
+            log->writeLogToFile(data,"REV",Info);
+        }
     }
 }
 

@@ -53,6 +53,8 @@ private slots:
 
     void on_btu_set_param_clicked();
 
+    void on_cB_rev_to_file_clicked(bool checked);
+
 private:
     Ui::lscom *ui;
     // lscom_service::serialImp *serial;

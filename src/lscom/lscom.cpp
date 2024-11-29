@@ -12,7 +12,7 @@ lscom::lscom(QWidget *parent)
     this->ui->sendperiod->setText(config.InputParam.SendInterval);
     this->ui->text_send->setText(config.InputParam.SendAreaData);
     //初始化表格数据内容
-    initTalbeView(config);
+    initTalbeView(config);    
 }
 
 /**
@@ -291,3 +291,9 @@ void lscom::onPortDataSend(long data)
 {
     setNumOnLabel(sendConterLabel, "S:", sendConter += data);
 }
+
+void lscom::on_cB_rev_to_file_clicked(bool checked)
+{
+    this->serviceAdapter->serialService->setIsRevDataToFile(checked);
+}
+

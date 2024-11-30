@@ -20,6 +20,7 @@
 #define GLOBAL_CONFIG_FILE_NAME "lscom.json"
 // 源码地址
 #define GLOBAL_CODE_SOURCE_URL "https://gitee.com/hblockd/lscom"
+#define GLOBAL_IMPORT_FILE_EXT "Text Files (*.txt)"
 
 /**
  * @brief 输入参数的数据
@@ -44,6 +45,28 @@ struct InputParam
      * @brief 发送数据的集合
      */
     QList<QString> SendDataList;
+
+    /**
+     * @brief 导入的文件路径
+     */
+    QString ImportFilePath;
+
+    /**
+     * @brief 文件循环发送使能
+     */
+    QString IsFileLoopSend;
+
+    /**
+     * @brief 文件逐行发送使能
+     */
+    QString IsPLineSend;
+
+    /**
+     * @brief 文件发送行间隔
+     */
+    QString FileSendLineInterval;
+
+
 };
 
 /**
@@ -141,5 +164,7 @@ bool checkFileExist(const QString &fileName);
  * @return
  */
 bool createFolderIfNotExist(const QString &folderPath);
+
+bool stringIsNllOrEmpty(const QString &str);
 
 #endif // COMMON_H

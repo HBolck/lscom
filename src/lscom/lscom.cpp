@@ -9,10 +9,15 @@ lscom::lscom(QWidget *parent)
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
     initView();
     Config config = this->serviceAdapter->configService->InitConfigFile();
-    this->ui->sendperiod->setText(config.InputParam.SendInterval);
-    this->ui->text_send->setText(config.InputParam.SendAreaData);
-    //初始化表格数据内容
-    initTalbeView(config);    
+
+    //加载配置缓存内容
+    loadConfig(config);
+
+    // this->ui->sendperiod->setText(config.InputParam.SendInterval);
+    // this->ui->text_send->setText(config.InputParam.SendAreaData);
+    // this->loadImportFile(config.InputParam.ImportFilePath); // 导入已有的文件内容
+    // // 初始化表格数据内容
+    // initTalbeView(config);
 }
 
 /**
@@ -21,7 +26,7 @@ lscom::lscom(QWidget *parent)
 void lscom::initView()
 {
     this->window()->setWindowTitle(GLOBAL_TITLE);
-    initStatusBar();    
+    initStatusBar();
     // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
     // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
@@ -36,7 +41,7 @@ void lscom::initView()
     ui->comboBox_DateBits->addItems(this->serviceAdapter->serialService->getSerialDataBits());
     ui->comboBox_DateBits->setCurrentIndex(3); // 8
     ui->comboBox_StopBits->addItems(this->serviceAdapter->serialService->getSerialStopBits());
-    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());   
+    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());
 }
 
 /**
@@ -77,14 +82,15 @@ void lscom::initStatusBar()
 /**
  * @brief 初始化数据表格
  */
-void lscom::initTalbeView(Config &config)
+void lscom::initTalbeView(const Config &config)
 {
     // 创建 QStandardItemModel 对象来存储数据
     QStandardItemModel *model = new QStandardItemModel;
     // 设置表头
     model->setHorizontalHeaderLabels(QStringList() << "数据" << "操作");
     // 向模型中添加数据
-    for (int i = 0; i < config.InputParam.SendDataList.count(); ++i) {
+    for (int i = 0; i < config.InputParam.SendDataList.count(); ++i)
+    {
         QList<QStandardItem *> items;
         QStandardItem *item = new QStandardItem(QString(config.InputParam.SendDataList[i]));
         items.append(item);
@@ -95,6 +101,43 @@ void lscom::initTalbeView(Config &config)
     // 将模型设置给 tableView
     this->ui->tableView->setItemDelegate(delegate);
     this->ui->tableView->setModel(model);
+}
+
+/**
+ * @brief 加载导入的文件
+ * @param fileName
+ */
+void lscom::loadImportFile(const QString &fileName)
+{
+    if (!fileName.isEmpty() && !fileName.isNull())
+    {
+        this->ui->importFileName->setText(fileName);
+        if (checkFileExist(fileName))
+        {
+            // 导入缓存
+            this->importFileContentCache = readFileContentList(fileName);
+            // 显示页面中文本内容
+            this->ui->text_file_area->setText(readFileContents(fileName));
+            // 将文件路径缓存到内存中
+            this->importFilePathCache = fileName;
+            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "文件打开成功", Inner, Info);
+        }
+        else
+        {
+            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "未能找到指定名称的文件", Inner, Error);
+        }
+    }
+}
+
+void lscom::loadConfig(const Config &config)
+{
+    this->ui->sendperiod->setText(config.InputParam.SendInterval); // 加载已有的定时发送间隔
+    this->ui->text_send->setText(config.InputParam.SendAreaData);  // 加载已有的发送区内容
+    this->loadImportFile(config.InputParam.ImportFilePath);        // 导入已有的文件内容
+    this->ui->cB_pLineSend_loop->setChecked(!stringIsNllOrEmpty(config.InputParam.IsFileLoopSend) && (config.InputParam.IsFileLoopSend == "1"));//设置是否循环发送文件内容
+    this->ui->cB_pLineSend->setChecked(!stringIsNllOrEmpty(config.InputParam.IsPLineSend) && (config.InputParam.IsPLineSend == "1"));//设置是否逐行发送文件内容
+    // 初始化表格数据内容
+    initTalbeView(config);
 }
 
 /**
@@ -265,9 +308,14 @@ void lscom::on_btu_set_param_clicked()
     Config config;
     config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
     config.InputParam.SendInterval = this->ui->sendperiod->text();
+    config.InputParam.ImportFilePath = this->importFilePathCache;
+    config.InputParam.IsPLineSend = this->ui->cB_pLineSend->isChecked() ? "1" : "0";         // 是否逐行发送
+    config.InputParam.IsFileLoopSend = this->ui->cB_pLineSend_loop->isChecked() ? "1" : "0"; // 是否循环发送
+    config.InputParam.FileSendLineInterval = this->ui->pLineInterval->text();                // 逐行发送间隔
     QList<QString> list;
-    for (int i = 0; i < this->ui->tableView->model()->rowCount(); ++i) {
-        auto index = this->ui->tableView->model()->index(i,0);
+    for (int i = 0; i < this->ui->tableView->model()->rowCount(); ++i)
+    {
+        auto index = this->ui->tableView->model()->index(i, 0);
         auto data = this->ui->tableView->model()->data(index);
         list.append(data.toString());
     }
@@ -281,10 +329,7 @@ void lscom::on_btu_set_param_clicked()
  */
 void lscom::on_btu_send_open_file_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(nullptr, "打开数据文件", "", "Text Files (*.txt)");
-    if (!fileName.isEmpty()) {
-        this->ui->importFileName->setText(fileName);
-    }
+    this->loadImportFile(QFileDialog::getOpenFileName(nullptr, "打开数据文件", "", GLOBAL_IMPORT_FILE_EXT));
 }
 
 /**
@@ -311,11 +356,3 @@ lscom::~lscom()
     delete serviceAdapter;
     delete ui;
 }
-
-
-
-
-
-
-
-

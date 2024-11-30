@@ -53,6 +53,10 @@ QString configToJson(const Config &config)
     jsonParam["SendAreaData"] = config.InputParam.SendAreaData;
     jsonParam["RevDataToFilePath"] = config.InputParam.RevDataToFilePath;
     jsonParam["SendInterval"] = config.InputParam.SendInterval;
+    jsonParam["ImportFilePath"] = config.InputParam.ImportFilePath;
+    jsonParam["IsPLineSend"] = config.InputParam.IsPLineSend;
+    jsonParam["IsFileLoopSend"] = config.InputParam.IsFileLoopSend;
+    jsonParam["FileSendLineInterval"] = config.InputParam.FileSendLineInterval;
     QJsonArray dataList;
     for (const QString &str : config.InputParam.SendDataList)
     {
@@ -130,6 +134,11 @@ QString readFileContents(const QString &fileName)
     return contents;
 }
 
+/**
+ * @brief readFileContentList
+ * @param fileName
+ * @return
+ */
 QList<QString> readFileContentList(const QString &fileName)
 {
     QList<QString> list;
@@ -172,6 +181,10 @@ bool jsonToConfig(const QString &jsonStr, Config &config)
     config.InputParam.RevDataToFilePath = inputParamObj.value("RevDataToFilePath").toString();
     config.InputParam.SendAreaData = inputParamObj.value("SendAreaData").toString();
     config.InputParam.SendInterval = inputParamObj.value("SendInterval").toString();
+    config.InputParam.ImportFilePath = inputParamObj.value("ImportFilePath").toString();
+    config.InputParam.IsPLineSend = inputParamObj.value("IsPLineSend").toString();
+    config.InputParam.IsFileLoopSend = inputParamObj.value("IsFileLoopSend").toString();
+    config.InputParam.FileSendLineInterval = inputParamObj.value("FileSendLineInterval").toString();
     QList<QString> list;
     if (inputParamObj.contains("SendDataList") && inputParamObj.value("SendDataList").isArray())
     {
@@ -183,4 +196,9 @@ bool jsonToConfig(const QString &jsonStr, Config &config)
         config.InputParam.SendDataList = list;
     }
     return true;
+}
+
+bool stringIsNllOrEmpty(const QString &str)
+{
+    return str.isEmpty() || str.isNull();
 }

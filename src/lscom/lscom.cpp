@@ -9,10 +9,9 @@ lscom::lscom(QWidget *parent)
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
     initView();
     Config config = this->serviceAdapter->configService->InitConfigFile();
-    this->ui->sendperiod->setText(config.InputParam.SendInterval);
-    this->ui->text_send->setText(config.InputParam.SendAreaData);
-    //初始化表格数据内容
-    initTalbeView(config);    
+
+    // 加载配置缓存内容
+    loadConfig(config);
 }
 
 /**
@@ -21,7 +20,7 @@ lscom::lscom(QWidget *parent)
 void lscom::initView()
 {
     this->window()->setWindowTitle(GLOBAL_TITLE);
-    initStatusBar();    
+    initStatusBar();
     // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
     // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
@@ -36,7 +35,7 @@ void lscom::initView()
     ui->comboBox_DateBits->addItems(this->serviceAdapter->serialService->getSerialDataBits());
     ui->comboBox_DateBits->setCurrentIndex(3); // 8
     ui->comboBox_StopBits->addItems(this->serviceAdapter->serialService->getSerialStopBits());
-    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());   
+    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());
 }
 
 /**
@@ -77,14 +76,15 @@ void lscom::initStatusBar()
 /**
  * @brief 初始化数据表格
  */
-void lscom::initTalbeView(Config &config)
+void lscom::initTalbeView(const Config &config)
 {
     // 创建 QStandardItemModel 对象来存储数据
     QStandardItemModel *model = new QStandardItemModel;
     // 设置表头
     model->setHorizontalHeaderLabels(QStringList() << "数据" << "操作");
     // 向模型中添加数据
-    for (int i = 0; i < config.InputParam.SendDataList.count(); ++i) {
+    for (int i = 0; i < config.InputParam.SendDataList.count(); ++i)
+    {
         QList<QStandardItem *> items;
         QStandardItem *item = new QStandardItem(QString(config.InputParam.SendDataList[i]));
         items.append(item);
@@ -98,11 +98,48 @@ void lscom::initTalbeView(Config &config)
 }
 
 /**
+ * @brief 加载导入的文件
+ * @param fileName
+ */
+void lscom::loadImportFile(const QString &fileName)
+{
+    if (!fileName.isEmpty() && !fileName.isNull())
+    {
+        this->ui->importFileName->setText(fileName);
+        if (checkFileExist(fileName))
+        {
+            // 导入缓存
+            this->importFileContentCache = readFileContentList(fileName);
+            // 显示页面中文本内容
+            this->ui->text_file_area->setText(readFileContents(fileName));
+            // 将文件路径缓存到内存中
+            this->importFilePathCache = fileName;
+            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "文件打开成功", Inner, Info);
+        }
+        else
+        {
+            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "未能找到指定名称的文件", Inner, Error);
+        }
+    }
+}
+
+void lscom::loadConfig(const Config &config)
+{
+    this->ui->sendperiod->setText(config.InputParam.SendInterval);                                                                               // 加载已有的定时发送间隔
+    this->ui->text_send->setText(config.InputParam.SendAreaData);                                                                                // 加载已有的发送区内容
+    this->loadImportFile(config.InputParam.ImportFilePath);                                                                                      // 导入已有的文件内容
+    this->ui->cB_pLineSend_loop->setChecked(!stringIsNllOrEmpty(config.InputParam.IsFileLoopSend) && (config.InputParam.IsFileLoopSend == "1")); // 设置是否循环发送文件内容
+    this->ui->cB_pLineSend->setChecked(!stringIsNllOrEmpty(config.InputParam.IsPLineSend) && (config.InputParam.IsPLineSend == "1"));            // 设置是否逐行发送文件内容
+    this->ui->pLineInterval->setText(config.InputParam.FileSendLineInterval);
+    // 初始化表格数据内容
+    initTalbeView(config);
+}
+
+/**
  * @brief 初始化定时器
  */
 void lscom::initTimer()
 {
-    // distoryTimer();
     QString sendperiodTime = this->ui->sendperiod->text();
     if (sendperiodTime.isEmpty())
     {
@@ -249,6 +286,15 @@ void lscom::on_cb_time_send_clicked(bool checked)
 }
 
 /**
+ * @brief 接收数据到文件勾选
+ * @param checked
+ */
+void lscom::on_cB_rev_to_file_clicked(bool checked)
+{
+    this->serviceAdapter->serialService->setIsRevDataToFile(checked);
+}
+
+/**
  * @brief 保存参数
  */
 void lscom::on_btu_set_param_clicked()
@@ -256,9 +302,14 @@ void lscom::on_btu_set_param_clicked()
     Config config;
     config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
     config.InputParam.SendInterval = this->ui->sendperiod->text();
+    config.InputParam.ImportFilePath = this->importFilePathCache;
+    config.InputParam.IsPLineSend = this->ui->cB_pLineSend->isChecked() ? "1" : "0";         // 是否逐行发送
+    config.InputParam.IsFileLoopSend = this->ui->cB_pLineSend_loop->isChecked() ? "1" : "0"; // 是否循环发送
+    config.InputParam.FileSendLineInterval = this->ui->pLineInterval->text();                // 逐行发送间隔
     QList<QString> list;
-    for (int i = 0; i < this->ui->tableView->model()->rowCount(); ++i) {
-        auto index = this->ui->tableView->model()->index(i,0);
+    for (int i = 0; i < this->ui->tableView->model()->rowCount(); ++i)
+    {
+        auto index = this->ui->tableView->model()->index(i, 0);
         auto data = this->ui->tableView->model()->data(index);
         list.append(data.toString());
     }
@@ -267,11 +318,68 @@ void lscom::on_btu_set_param_clicked()
     this->serviceAdapter->logService->setTextLog(this->ui->log_text, "保存成功", Inner, Info);
 }
 
-lscom::~lscom()
+/**
+ * @brief 打开文件
+ */
+void lscom::on_btu_send_open_file_clicked()
 {
-    this->distoryTimer();
-    delete serviceAdapter;
-    delete ui;
+    this->loadImportFile(QFileDialog::getOpenFileName(nullptr, "打开数据文件", "", GLOBAL_IMPORT_FILE_EXT));
+}
+
+/**
+ * @brief 发送文件
+ */
+void lscom::on_btu_send_file_clicked()
+{
+    if (this->importFileContentCache.size() > 0)
+    {
+        if (this->serviceAdapter->serialService->GetConnectStatus())
+        {
+            // 逐行发送
+            if (this->ui->cB_pLineSend->isChecked())
+            {
+                uint interval;
+                QString sendperiodTime = this->ui->pLineInterval->text();
+                if (sendperiodTime.isEmpty())
+                {
+                    this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔不能为空！[默认使用1000ms作为之间间隔]", Inner, Error);
+                    interval = 1000;
+                }
+                bool flag = isQStringToUint(sendperiodTime, &interval);
+                if (!flag)
+                {
+                    this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！[默认使用1000ms作为之间间隔]", Inner, Error);
+                    interval = 1000;
+                }
+                QElapsedTimer timer;
+                for (const QString &data : importFileContentCache)
+                {
+                    timer.restart();
+                    while (timer.elapsed() < interval)
+                    {
+                        QCoreApplication::processEvents(); // 用于处理当前线程中的待处理事件 保证主线程不阻塞
+                    }
+                    this->serviceAdapter->serialService->SendData(data.toUtf8());
+
+                    // 这个操作是异步的 这里不适合
+                    //  QTimer::singleShot(interval, this, [=]()
+                    //                     { this->serviceAdapter->serialService->SendData(data.toUtf8()); });
+                }
+            }
+            else // 全量发送
+            {
+                this->serviceAdapter->serialService->SendData(this->ui->text_file_area->toPlainText().toUtf8());
+            }
+        }
+        else
+        {
+            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "端口未打开！", Inner, Error);
+        }
+    }
+    else
+    {
+        this->serviceAdapter->logService->setTextLog(this->ui->log_text, "请选择文件后重试！", Inner, Warning);
+    }
 }
 
 /**
@@ -292,8 +400,9 @@ void lscom::onPortDataSend(long data)
     setNumOnLabel(sendConterLabel, "S:", sendConter += data);
 }
 
-void lscom::on_cB_rev_to_file_clicked(bool checked)
+lscom::~lscom()
 {
-    this->serviceAdapter->serialService->setIsRevDataToFile(checked);
+    this->distoryTimer();
+    delete serviceAdapter;
+    delete ui;
 }
-

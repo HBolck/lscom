@@ -54,7 +54,7 @@ void lscom::initStatusBar()
 
     this->ui->statusbar->addWidget(sourceCodelinkLable);
     this->version = new QLabel(this);
-    this->version->setText("v1.2.0");
+    this->version->setText("v1.2.3");
     version->setMinimumSize(40, 20);
 
     this->ui->statusbar->addWidget(version);

@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>lscom</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="insert-link"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
@@ -522,7 +525,7 @@ border-color: rgb(98, 98, 98);</string>
      <x>0</x>
      <y>0</y>
      <width>855</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -57,6 +57,8 @@ private slots:
 
     void on_btu_send_open_file_clicked();
 
+    void on_btu_send_file_clicked();
+
 private:
     Ui::lscom *ui;
     // lscom_service::serialImp *serial;

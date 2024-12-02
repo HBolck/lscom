@@ -10,14 +10,8 @@ lscom::lscom(QWidget *parent)
     initView();
     Config config = this->serviceAdapter->configService->InitConfigFile();
 
-    //加载配置缓存内容
+    // 加载配置缓存内容
     loadConfig(config);
-
-    // this->ui->sendperiod->setText(config.InputParam.SendInterval);
-    // this->ui->text_send->setText(config.InputParam.SendAreaData);
-    // this->loadImportFile(config.InputParam.ImportFilePath); // 导入已有的文件内容
-    // // 初始化表格数据内容
-    // initTalbeView(config);
 }
 
 /**
@@ -131,11 +125,12 @@ void lscom::loadImportFile(const QString &fileName)
 
 void lscom::loadConfig(const Config &config)
 {
-    this->ui->sendperiod->setText(config.InputParam.SendInterval); // 加载已有的定时发送间隔
-    this->ui->text_send->setText(config.InputParam.SendAreaData);  // 加载已有的发送区内容
-    this->loadImportFile(config.InputParam.ImportFilePath);        // 导入已有的文件内容
-    this->ui->cB_pLineSend_loop->setChecked(!stringIsNllOrEmpty(config.InputParam.IsFileLoopSend) && (config.InputParam.IsFileLoopSend == "1"));//设置是否循环发送文件内容
-    this->ui->cB_pLineSend->setChecked(!stringIsNllOrEmpty(config.InputParam.IsPLineSend) && (config.InputParam.IsPLineSend == "1"));//设置是否逐行发送文件内容
+    this->ui->sendperiod->setText(config.InputParam.SendInterval);                                                                               // 加载已有的定时发送间隔
+    this->ui->text_send->setText(config.InputParam.SendAreaData);                                                                                // 加载已有的发送区内容
+    this->loadImportFile(config.InputParam.ImportFilePath);                                                                                      // 导入已有的文件内容
+    this->ui->cB_pLineSend_loop->setChecked(!stringIsNllOrEmpty(config.InputParam.IsFileLoopSend) && (config.InputParam.IsFileLoopSend == "1")); // 设置是否循环发送文件内容
+    this->ui->cB_pLineSend->setChecked(!stringIsNllOrEmpty(config.InputParam.IsPLineSend) && (config.InputParam.IsPLineSend == "1"));            // 设置是否逐行发送文件内容
+    this->ui->pLineInterval->setText(config.InputParam.FileSendLineInterval);
     // 初始化表格数据内容
     initTalbeView(config);
 }
@@ -145,7 +140,6 @@ void lscom::loadConfig(const Config &config)
  */
 void lscom::initTimer()
 {
-    // distoryTimer();
     QString sendperiodTime = this->ui->sendperiod->text();
     if (sendperiodTime.isEmpty())
     {
@@ -330,6 +324,62 @@ void lscom::on_btu_set_param_clicked()
 void lscom::on_btu_send_open_file_clicked()
 {
     this->loadImportFile(QFileDialog::getOpenFileName(nullptr, "打开数据文件", "", GLOBAL_IMPORT_FILE_EXT));
+}
+
+/**
+ * @brief 发送文件
+ */
+void lscom::on_btu_send_file_clicked()
+{
+    if (this->importFileContentCache.size() > 0)
+    {
+        if (this->serviceAdapter->serialService->GetConnectStatus())
+        {
+            // 逐行发送
+            if (this->ui->cB_pLineSend->isChecked())
+            {
+                uint interval;
+                QString sendperiodTime = this->ui->pLineInterval->text();
+                if (sendperiodTime.isEmpty())
+                {
+                    this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔不能为空！[默认使用1000ms作为之间间隔]", Inner, Error);
+                    interval = 1000;
+                }
+                bool flag = isQStringToUint(sendperiodTime, &interval);
+                if (!flag)
+                {
+                    this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！[默认使用1000ms作为之间间隔]", Inner, Error);
+                    interval = 1000;
+                }
+                QElapsedTimer timer;
+                for (const QString &data : importFileContentCache)
+                {
+                    timer.restart();
+                    while (timer.elapsed() < interval)
+                    {
+                        QCoreApplication::processEvents(); // 用于处理当前线程中的待处理事件 保证主线程不阻塞
+                    }
+                    this->serviceAdapter->serialService->SendData(data.toUtf8());
+
+                    // 这个操作是异步的 这里不适合
+                    //  QTimer::singleShot(interval, this, [=]()
+                    //                     { this->serviceAdapter->serialService->SendData(data.toUtf8()); });
+                }
+            }
+            else // 全量发送
+            {
+                this->serviceAdapter->serialService->SendData(this->ui->text_file_area->toPlainText().toUtf8());
+            }
+        }
+        else
+        {
+            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "端口未打开！", Inner, Error);
+        }
+    }
+    else
+    {
+        this->serviceAdapter->logService->setTextLog(this->ui->log_text, "请选择文件后重试！", Inner, Warning);
+    }
 }
 
 /**

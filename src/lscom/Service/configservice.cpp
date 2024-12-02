@@ -16,7 +16,10 @@ Config lscom_service::ConfigService::InitConfigFile()
     Config config;
     config.InputParam.RevDataToFilePath = "Rev";
     config.InputParam.SendAreaData = GLOBAL_CODE_SOURCE_URL;
-    config.InputParam.SendInterval = "1000";
+    config.InputParam.SendInterval = "1000";//初始化定时发送的时间间隔ms
+    config.InputParam.IsFileLoopSend = "0";//初始化循环发送文件为false
+    config.InputParam.IsPLineSend = "1";//初始化逐行发送文件为true
+    config.InputParam.FileSendLineInterval = "1000";
     QList<QString> list;
     for (int var = 0; var < 10; ++var) {
         list.append(QString("双击添加数据"));

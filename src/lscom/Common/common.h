@@ -13,6 +13,8 @@
 #include <QTextStream>
 #include <QJsonArray>
 #include <QFileDialog>
+#include <QTimer>
+#include <QElapsedTimer>
 
 // 默认标题
 #define GLOBAL_TITLE "lscom串口工具"

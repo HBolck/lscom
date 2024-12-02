@@ -53,6 +53,10 @@ QString configToJson(const Config &config)
     jsonParam["SendAreaData"] = config.InputParam.SendAreaData;
     jsonParam["RevDataToFilePath"] = config.InputParam.RevDataToFilePath;
     jsonParam["SendInterval"] = config.InputParam.SendInterval;
+    jsonParam["ImportFilePath"] = config.InputParam.ImportFilePath;
+    jsonParam["IsPLineSend"] = config.InputParam.IsPLineSend;
+    jsonParam["IsFileLoopSend"] = config.InputParam.IsFileLoopSend;
+    jsonParam["FileSendLineInterval"] = config.InputParam.FileSendLineInterval;
     QJsonArray dataList;
     for (const QString &str : config.InputParam.SendDataList)
     {
@@ -89,10 +93,14 @@ bool checkFileExist(const QString &fileName)
 bool createFolderIfNotExist(const QString &folderPath)
 {
     QDir dir(folderPath);
-    if (!dir.exists()) {
-        if (dir.mkpath(folderPath)) {
+    if (!dir.exists())
+    {
+        if (dir.mkpath(folderPath))
+        {
             return true;
-        } else {
+        }
+        else
+        {
             qDebug() << "创建文件加失败";
             return false;
         }
@@ -110,6 +118,8 @@ QString readFileContents(const QString &fileName)
         return "";
     if (fileName.isEmpty())
         return "";
+    if (checkFileExist(fileName) == false)
+        return "";
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -122,6 +132,35 @@ QString readFileContents(const QString &fileName)
     file.close();
 
     return contents;
+}
+
+/**
+ * @brief readFileContentList
+ * @param fileName
+ * @return
+ */
+QList<QString> readFileContentList(const QString &fileName)
+{
+    QList<QString> list;
+    if (fileName.isNull())
+        return list;
+    if (fileName.isEmpty())
+        return list;
+    if (checkFileExist(fileName) == false)
+        return list;
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return list;
+    }
+    QTextStream in(&file);
+    QString temp = "";
+    while ((temp = in.readLine()).isNull() == false)
+    {
+        list.append(temp);
+    }
+    file.close();
+    return list;
 }
 
 bool jsonToConfig(const QString &jsonStr, Config &config)
@@ -142,10 +181,16 @@ bool jsonToConfig(const QString &jsonStr, Config &config)
     config.InputParam.RevDataToFilePath = inputParamObj.value("RevDataToFilePath").toString();
     config.InputParam.SendAreaData = inputParamObj.value("SendAreaData").toString();
     config.InputParam.SendInterval = inputParamObj.value("SendInterval").toString();
+    config.InputParam.ImportFilePath = inputParamObj.value("ImportFilePath").toString();
+    config.InputParam.IsPLineSend = inputParamObj.value("IsPLineSend").toString();
+    config.InputParam.IsFileLoopSend = inputParamObj.value("IsFileLoopSend").toString();
+    config.InputParam.FileSendLineInterval = inputParamObj.value("FileSendLineInterval").toString();
     QList<QString> list;
-    if(inputParamObj.contains("SendDataList") && inputParamObj.value("SendDataList").isArray()){
+    if (inputParamObj.contains("SendDataList") && inputParamObj.value("SendDataList").isArray())
+    {
         QJsonArray array = inputParamObj.value("SendDataList").toArray();
-        for(const auto &value : array){
+        for (const auto &value : array)
+        {
             list.append(value.toString());
         }
         config.InputParam.SendDataList = list;
@@ -153,7 +198,7 @@ bool jsonToConfig(const QString &jsonStr, Config &config)
     return true;
 }
 
-
-
-
-
+bool stringIsNllOrEmpty(const QString &str)
+{
+    return str.isEmpty() || str.isNull();
+}

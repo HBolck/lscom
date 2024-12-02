@@ -55,11 +55,24 @@ private slots:
 
     void on_cB_rev_to_file_clicked(bool checked);
 
+    void on_btu_send_open_file_clicked();
+
+    void on_btu_send_file_clicked();
+
 private:
     Ui::lscom *ui;
     // lscom_service::serialImp *serial;
     // lscom_service::LogService *log;
     lscom_service::ServiceAdapter *serviceAdapter;
+
+    /**
+     * @brief 导入文件内容缓存
+     */
+    QList<QString> importFileContentCache;
+    /**
+     * @brief 导入的文件路径缓存
+     */
+    QString importFilePathCache;
 
     QTimer* sendDataTimer;
     bool _sendTimerStart = false;
@@ -110,6 +123,18 @@ private:
     /**
      * @brief 初始化数据表格
      */
-    void initTalbeView(Config &config);
+    void initTalbeView(const Config &config);
+
+    /**
+     * @brief 加载导入的文件
+     * @param fileName
+     */
+    void loadImportFile(const QString &fileName);
+
+    /**
+     * @brief 加载已有缓存内容
+     * @param config
+     */
+    void loadConfig(const Config &config);
 };
 

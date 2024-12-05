@@ -20,12 +20,12 @@ lscom::lscom(QWidget *parent)
 void lscom::initView()
 {
     this->window()->setWindowTitle(GLOBAL_TITLE);
+    this->ui->btu_open_com->setText(GLOBAL_OPEN_CONTEXT);
     initStatusBar();
     // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
     // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
     this->ui->btu_open_com->setEnabled(true);
-    this->ui->btu_close_com->setEnabled(false);
     this->ui->btu_send_data->setEnabled(false);
     // 初始化串口参数
     ui->comPortBox->clear();
@@ -36,6 +36,10 @@ void lscom::initView()
     ui->comboBox_DateBits->setCurrentIndex(3); // 8
     ui->comboBox_StopBits->addItems(this->serviceAdapter->serialService->getSerialStopBits());
     ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());
+
+    this->ui->protocolList->addItem("串口");
+    this->ui->protocolList->addItem("TCP");
+    this->ui->protocolList->addItem("UDP");
 }
 
 /**
@@ -190,35 +194,32 @@ void lscom::distoryTimer()
  */
 void lscom::on_btu_open_com_clicked()
 {
-    SerialPortConfig config;
-    config.Baudrate = this->serviceAdapter->serialService->mathBaudRate(this->ui->comboBox_BaudRate->currentText());
-    config.DataBits = this->serviceAdapter->serialService->mathDataBits(this->ui->comboBox_DateBits->currentText());
-    config.StopBits = this->serviceAdapter->serialService->mathStopBits(this->ui->comboBox_StopBits->currentText());
-    config.Parity = this->serviceAdapter->serialService->mathParity(this->ui->comboBox_Parity->currentText());
-    config.PortName = this->ui->comPortBox->currentText();
-    this->serviceAdapter->serialService->initSerialPortInstance(config);
-    this->serviceAdapter->serialService->OpenPort();
     if (this->serviceAdapter->serialService->GetConnectStatus())
     {
-        this->ui->btu_open_com->setEnabled(false);
-        this->ui->btu_send_data->setEnabled(true);
-        this->ui->btu_close_com->setEnabled(true);
-        connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
-        connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
+        this->serviceAdapter->serialService->ClosePort();
+        this->ui->btu_send_data->setEnabled(false);
+        disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
+        disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
+        this->ui->btu_open_com->setText(GLOBAL_OPEN_CONTEXT);
     }
-}
-
-/**
- * @brief 关闭串口
- */
-void lscom::on_btu_close_com_clicked()
-{
-    this->serviceAdapter->serialService->ClosePort();
-    this->ui->btu_open_com->setEnabled(true);
-    this->ui->btu_send_data->setEnabled(false);
-    this->ui->btu_close_com->setEnabled(false);
-    disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
-    disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
+    else
+    {
+        SerialPortConfig config;
+        config.Baudrate = this->serviceAdapter->serialService->mathBaudRate(this->ui->comboBox_BaudRate->currentText());
+        config.DataBits = this->serviceAdapter->serialService->mathDataBits(this->ui->comboBox_DateBits->currentText());
+        config.StopBits = this->serviceAdapter->serialService->mathStopBits(this->ui->comboBox_StopBits->currentText());
+        config.Parity = this->serviceAdapter->serialService->mathParity(this->ui->comboBox_Parity->currentText());
+        config.PortName = this->ui->comPortBox->currentText();
+        this->serviceAdapter->serialService->initSerialPortInstance(config);
+        this->serviceAdapter->serialService->OpenPort();
+        if (this->serviceAdapter->serialService->GetConnectStatus())
+        {
+            this->ui->btu_send_data->setEnabled(true);
+            connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
+            connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
+            this->ui->btu_open_com->setText(GLOBAL_CLOSE_CONTEXT);
+        }
+    }
 }
 
 /**

@@ -37,8 +37,6 @@ private slots:
 
     void on_btu_open_com_clicked();
 
-    void on_btu_close_com_clicked();
-
     void on_btu_send_data_clicked();
 
     void on_btu_clear_log_text_clicked();
@@ -136,5 +134,7 @@ private:
      * @param config
      */
     void loadConfig(const Config &config);
+
+
 };
 

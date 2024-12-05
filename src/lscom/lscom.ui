@@ -322,36 +322,22 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QPushButton" name="btu_open_com">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>90</x>
       <y>370</y>
       <width>91</width>
       <height>31</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 170, 0);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>开启端口</string>
-    </property>
-    <property name="autoDefault">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btu_close_com">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>370</y>
-      <width>92</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(170, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>关闭端口</string>
     </property>
     <property name="autoDefault">
      <bool>false</bool>
@@ -521,6 +507,16 @@ border-color: rgb(98, 98, 98);</string>
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QComboBox" name="protocolList">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>370</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -528,7 +524,7 @@ border-color: rgb(98, 98, 98);</string>
      <x>0</x>
      <y>0</y>
      <width>855</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

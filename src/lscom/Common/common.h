@@ -23,6 +23,8 @@
 // 源码地址
 #define GLOBAL_CODE_SOURCE_URL "https://gitee.com/hblockd/lscom"
 #define GLOBAL_IMPORT_FILE_EXT "Text Files (*.txt)"
+#define GLOBAL_OPEN_CONTEXT "开启端口"
+#define GLOBAL_CLOSE_CONTEXT "关闭端口"
 
 /**
  * @brief 输入参数的数据

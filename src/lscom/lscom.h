@@ -8,6 +8,8 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include "Delegate/qstylewithbuttondelegate.h"
+#include "serialportconfigpanel.h"
+#include "tcpconfgpanel.h"
 
 #endif // LSCOM_H
 
@@ -57,10 +59,17 @@ private slots:
 
     void on_btu_send_file_clicked();
 
+    void on_protocolList_currentIndexChanged(int index);
+
 private:
     Ui::lscom *ui;
-    // lscom_service::serialImp *serial;
-    // lscom_service::LogService *log;
+    /**
+     * @brief 串口配置
+     */
+    SerialPortConfigPanel *serialPanel;
+
+    TcpConfgPanel *tcpPanel;
+
     lscom_service::ServiceAdapter *serviceAdapter;
 
     /**

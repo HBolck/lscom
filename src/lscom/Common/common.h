@@ -15,6 +15,7 @@
 #include <QFileDialog>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QStackedWidget>
 
 // 默认标题
 #define GLOBAL_TITLE "lscom串口工具"
@@ -97,14 +98,13 @@ enum TimeFormat
  * @param value 用于存储转换结果的 uint 指针
  * @return 转换是否成功
  */
-bool
-isQStringToUint(const QString &str, uint *value);
+bool IsQStringToUint(const QString &str, uint *value);
 
 /**
  * @brief 获取QString格式的HEX字符串内容
  * @param data
  */
-QString getQStringHex(QByteArray data);
+QString GetQStringHex(QByteArray data);
 
 /**
  * @brief 给标签设置数值
@@ -112,28 +112,28 @@ QString getQStringHex(QByteArray data);
  * @param str
  * @param num
  */
-void setNumOnLabel(QLabel *lel, QString str, long num);
+void SetNumOnLabel(QLabel *lel, QString str, long num);
 
 /**
  * @brief varinatToJson
  * @param variant
  * @return
  */
-QString mapToJson(const QMap<QString, QString> &map);
+QString MapToJson(const QMap<QString, QString> &map);
 
 /**
  * @brief 配置信息转成json
  * @param config
  * @return
  */
-QString configToJson(const Config &config);
+QString ConfigToJson(const Config &config);
 
 /**
  * @brief 将json写入文件
  * @param fileName
  * @param json
  */
-void writeJsonToFile(const QString &fileName, const QString &json);
+void WriteJsonToFile(const QString &fileName, const QString &json);
 
 /**
  * @brief jsonToConfig
@@ -141,34 +141,41 @@ void writeJsonToFile(const QString &fileName, const QString &json);
  * @param config
  * @return
  */
-bool jsonToConfig(const QString &jsonStr, Config &config);
+bool JsonToConfig(const QString &jsonStr, Config &config);
 
 /**
  * @brief 读取文件到QString
  * @param fileName
  * @return
  */
-QString readFileContents(const QString &fileName);
+QString ReadFileContents(const QString &fileName);
 
 /**
  * @brief 读取文件到列表
  */
-QList<QString> readFileContentList(const QString &fileName);
+QList<QString> ReadFileContentList(const QString &fileName);
 
 /**
  * @brief 检查文件是否存在
  * @param fileName
  * @return
  */
-bool checkFileExist(const QString &fileName);
+bool CheckFileExist(const QString &fileName);
 
 /**
  * @brief 检查文件目录 如果不存在就创建
  * @param folderPath
  * @return
  */
-bool createFolderIfNotExist(const QString &folderPath);
+bool CreateFolderIfNotExist(const QString &folderPath);
 
-bool stringIsNllOrEmpty(const QString &str);
+bool StringIsNllOrEmpty(const QString &str);
+
+/**
+ * @brief 清理Layout
+ * @param layout
+ * @param isFree
+ */
+void ClearWidgetChildren(QStackedWidget *layout,bool isFree = false);
 
 #endif // COMMON_H

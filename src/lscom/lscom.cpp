@@ -5,8 +5,14 @@ lscom::lscom(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::lscom)
 {
     ui->setupUi(this);
+
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
+    this->serialPanel = new SerialPortConfigPanel();
+    this->serialPanel->setSerialImp(this->serviceAdapter->serialService);
+
+    this->tcpPanel = new TcpConfgPanel(this);
+
     initView();
     Config config = this->serviceAdapter->configService->InitConfigFile();
 
@@ -27,19 +33,11 @@ void lscom::initView()
     // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_send_data->setEnabled(false);
-    // 初始化串口参数
-    ui->comPortBox->clear();
-    ui->comPortBox->addItems(this->serviceAdapter->serialService->getSerialPorts());
-    ui->comboBox_BaudRate->addItems(this->serviceAdapter->serialService->getSerialBundRates());
-    ui->comboBox_BaudRate->setCurrentIndex(3); // 9600
-    ui->comboBox_DateBits->addItems(this->serviceAdapter->serialService->getSerialDataBits());
-    ui->comboBox_DateBits->setCurrentIndex(3); // 8
-    ui->comboBox_StopBits->addItems(this->serviceAdapter->serialService->getSerialStopBits());
-    ui->comboBox_Parity->addItems(this->serviceAdapter->serialService->getSerialParity());
-
     this->ui->protocolList->addItem("串口");
     this->ui->protocolList->addItem("TCP");
     this->ui->protocolList->addItem("UDP");
+
+
 }
 
 /**
@@ -71,8 +69,8 @@ void lscom::initStatusBar()
     sourceCodelinkLable->setMinimumSize(40, 20);
     this->recConter = 0;
     this->sendConter = 0;
-    setNumOnLabel(this->recConterLabel, "R:", recConter);
-    setNumOnLabel(this->sendConterLabel, "S:", sendConter);
+    SetNumOnLabel(this->recConterLabel, "R:", recConter);
+    SetNumOnLabel(this->sendConterLabel, "S:", sendConter);
     this->ui->statusbar->addWidget(recConterLabel);
     this->ui->statusbar->addWidget(sendConterLabel);
 }
@@ -110,12 +108,12 @@ void lscom::loadImportFile(const QString &fileName)
     if (!fileName.isEmpty() && !fileName.isNull())
     {
         this->ui->importFileName->setText(fileName);
-        if (checkFileExist(fileName))
+        if (CheckFileExist(fileName))
         {
             // 导入缓存
-            this->importFileContentCache = readFileContentList(fileName);
+            this->importFileContentCache = ReadFileContentList(fileName);
             // 显示页面中文本内容
-            this->ui->text_file_area->setText(readFileContents(fileName));
+            this->ui->text_file_area->setText(ReadFileContents(fileName));
             // 将文件路径缓存到内存中
             this->importFilePathCache = fileName;
             this->serviceAdapter->logService->setTextLog(this->ui->log_text, "文件打开成功", Inner, Info);
@@ -132,8 +130,8 @@ void lscom::loadConfig(const Config &config)
     this->ui->sendperiod->setText(config.InputParam.SendInterval);                                                                               // 加载已有的定时发送间隔
     this->ui->text_send->setText(config.InputParam.SendAreaData);                                                                                // 加载已有的发送区内容
     this->loadImportFile(config.InputParam.ImportFilePath);                                                                                      // 导入已有的文件内容
-    this->ui->cB_pLineSend_loop->setChecked(!stringIsNllOrEmpty(config.InputParam.IsFileLoopSend) && (config.InputParam.IsFileLoopSend == "1")); // 设置是否循环发送文件内容
-    this->ui->cB_pLineSend->setChecked(!stringIsNllOrEmpty(config.InputParam.IsPLineSend) && (config.InputParam.IsPLineSend == "1"));            // 设置是否逐行发送文件内容
+    this->ui->cB_pLineSend_loop->setChecked(!StringIsNllOrEmpty(config.InputParam.IsFileLoopSend) && (config.InputParam.IsFileLoopSend == "1")); // 设置是否循环发送文件内容
+    this->ui->cB_pLineSend->setChecked(!StringIsNllOrEmpty(config.InputParam.IsPLineSend) && (config.InputParam.IsPLineSend == "1"));            // 设置是否逐行发送文件内容
     this->ui->pLineInterval->setText(config.InputParam.FileSendLineInterval);
     // 初始化表格数据内容
     initTalbeView(config);
@@ -151,7 +149,7 @@ void lscom::initTimer()
         return;
     }
     uint interval;
-    bool flag = isQStringToUint(sendperiodTime, &interval);
+    bool flag = IsQStringToUint(sendperiodTime, &interval);
     if (!flag)
     {
         this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！", Inner, Error);
@@ -189,6 +187,26 @@ void lscom::distoryTimer()
     }
 }
 
+
+void lscom::on_protocolList_currentIndexChanged(int index)
+{
+    ClearWidgetChildren(this->ui->stackedWidget);
+    switch(index)
+    {
+    case 0:
+        //将配置面板插入到页面容器中
+        this->ui->stackedWidget->addWidget(this->serialPanel);
+        break;
+    case 1:
+        //将配置面板插入到页面容器中
+        this->ui->stackedWidget->addWidget(this->tcpPanel);
+        break;
+    case 2:
+        break;
+    default:break;
+    }
+}
+
 /**
  * @brief 开启串口
  */
@@ -204,12 +222,7 @@ void lscom::on_btu_open_com_clicked()
     }
     else
     {
-        SerialPortConfig config;
-        config.Baudrate = this->serviceAdapter->serialService->mathBaudRate(this->ui->comboBox_BaudRate->currentText());
-        config.DataBits = this->serviceAdapter->serialService->mathDataBits(this->ui->comboBox_DateBits->currentText());
-        config.StopBits = this->serviceAdapter->serialService->mathStopBits(this->ui->comboBox_StopBits->currentText());
-        config.Parity = this->serviceAdapter->serialService->mathParity(this->ui->comboBox_Parity->currentText());
-        config.PortName = this->ui->comPortBox->currentText();
+        SerialPortConfig config = this->serialPanel->GetSerialPortConfig();
         this->serviceAdapter->serialService->initSerialPortInstance(config);
         this->serviceAdapter->serialService->OpenPort();
         if (this->serviceAdapter->serialService->GetConnectStatus())
@@ -237,7 +250,7 @@ void lscom::on_btu_clear_log_text_clicked()
 {
     this->ui->log_text->clear();
     recConter = 0;
-    setNumOnLabel(recConterLabel, "R:", 0);
+    SetNumOnLabel(recConterLabel, "R:", 0);
 }
 
 /**
@@ -247,7 +260,7 @@ void lscom::on_btu_clear_send_text_clicked()
 {
     this->ui->text_send->clear();
     sendConter = 0;
-    setNumOnLabel(sendConterLabel, "S:", 0);
+    SetNumOnLabel(sendConterLabel, "S:", 0);
 }
 
 /**
@@ -346,7 +359,7 @@ void lscom::on_btu_send_file_clicked()
                     this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔不能为空！[默认使用1000ms作为之间间隔]", Inner, Error);
                     interval = 1000;
                 }
-                bool flag = isQStringToUint(sendperiodTime, &interval);
+                bool flag = IsQStringToUint(sendperiodTime, &interval);
                 if (!flag)
                 {
                     this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！[默认使用1000ms作为之间间隔]", Inner, Error);
@@ -389,7 +402,7 @@ void lscom::on_btu_send_file_clicked()
  */
 void lscom::onPortDataReved(long data)
 {
-    setNumOnLabel(recConterLabel, "R:", recConter += data);
+    SetNumOnLabel(recConterLabel, "R:", recConter += data);
 }
 
 /**
@@ -398,12 +411,16 @@ void lscom::onPortDataReved(long data)
  */
 void lscom::onPortDataSend(long data)
 {
-    setNumOnLabel(sendConterLabel, "S:", sendConter += data);
+    SetNumOnLabel(sendConterLabel, "S:", sendConter += data);
 }
 
 lscom::~lscom()
 {
+    ClearWidgetChildren(this->ui->stackedWidget,true);
     this->distoryTimer();
     delete serviceAdapter;
     delete ui;
 }
+
+
+

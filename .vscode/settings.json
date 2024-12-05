@@ -6,7 +6,8 @@
         "iterator": "cpp",
         "xmemory": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "qstackedwidget": "cpp"
     },
     "cmake.options.statusBarVisibility": "hidden"
 }

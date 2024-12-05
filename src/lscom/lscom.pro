@@ -18,7 +18,9 @@ SOURCES += \
     Service/serialImp.cpp \
     Service/serviceadapter.cpp \
     main.cpp \
-    lscom.cpp
+    lscom.cpp \
+    serialportconfigpanel.cpp \
+    tcpconfgpanel.cpp
 
 HEADERS += \
     Common/common.h \
@@ -28,10 +30,14 @@ HEADERS += \
     Service/logservice.h \
     Service/serialImp.h \
     Service/serviceadapter.h \
-    lscom.h
+    lscom.h \
+    serialportconfigpanel.h \
+    tcpconfgpanel.h
 
 FORMS += \
-    lscom.ui
+    lscom.ui \
+    serialportconfigpanel.ui \
+    tcpconfgpanel.ui
 
 TRANSLATIONS += \
     lscom_zh_CN.ts

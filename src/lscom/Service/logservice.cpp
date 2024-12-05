@@ -69,7 +69,7 @@ void lscom_service::LogService::writeLogToFile(const char *str, const char *grou
     QString currentPath = QCoreApplication::applicationDirPath();
     QString dirPath = currentPath + "/" + this->fileDirPath + "/" + groupName + "/" + dayPath;
     QString filePath = dirPath + "/" + fileName + this->fileExtension;
-    createFolderIfNotExist(dirPath);   
+    CreateFolderIfNotExist(dirPath);   
     QString dateTime = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
     file->setFileName(filePath);
     QString logContent = "[" + this->getLogLevelStr(logLevel) + "]\r" + dateTime + ":\t" + "\r" + str;

@@ -8,10 +8,9 @@ lscom::lscom(QWidget *parent)
 
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
-    this->serialPanel = new SerialPortConfigPanel();
+    this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
     this->serialPanel->setSerialImp(this->serviceAdapter->serialService);
-
-    this->tcpPanel = new TcpConfgPanel(this);
+    this->tcpPanel = new TcpConfgPanel(this->ui->stackedWidget);
 
     initView();
     Config config = this->serviceAdapter->configService->InitConfigFile();

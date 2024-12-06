@@ -5,18 +5,9 @@ lscom::lscom(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::lscom)
 {
     ui->setupUi(this);
-
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
-    this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
-    this->serialPanel->setSerialImp(this->serviceAdapter->serialService);
-    this->tcpPanel = new TcpConfgPanel(this->ui->stackedWidget);
-
-    initView();
-    Config config = this->serviceAdapter->configService->InitConfigFile();
-
-    // 加载配置缓存内容
-    loadConfig(config);
+    initView();       
 }
 
 /**
@@ -29,14 +20,14 @@ void lscom::initView()
     initStatusBar();
     // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
-    // 设置按钮组可用状态（后续抽出来，更改为状态机之类的机制控制）
     this->ui->btu_open_com->setEnabled(true);
-    this->ui->btu_send_data->setEnabled(false);
-    this->ui->protocolList->addItem("串口");
-    this->ui->protocolList->addItem("TCP");
-    this->ui->protocolList->addItem("UDP");
-
-
+    this->ui->btu_send_data->setEnabled(false);   
+     Config config = this->serviceAdapter->configService->InitConfigFile();
+    // 加载配置缓存内容
+    loadConfig(config);
+    // 加载子项面板对象
+    loadChildPanel(); 
+    loadProtocolList();
 }
 
 /**
@@ -137,6 +128,28 @@ void lscom::loadConfig(const Config &config)
 }
 
 /**
+ * @brief 加载子面板
+ */
+void lscom::loadChildPanel()
+{
+    this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
+    // 初始化面板中的数据 将串口服务传进去
+    this->serialPanel->setSerialImp(this->serviceAdapter->serialService);
+    this->tcpPanel = new TcpConfgPanel(this->ui->stackedWidget);
+}
+
+/**
+ * @brief 加载子面板
+ */
+void lscom::loadProtocolList()
+{
+    this->ui->protocolList->addItem("串口");
+    this->ui->protocolList->addItem("TcpService");
+    this->ui->protocolList->addItem("TcpClient");
+    this->ui->protocolList->addItem("UDP");
+}
+
+/**
  * @brief 初始化定时器
  */
 void lscom::initTimer()
@@ -186,23 +199,23 @@ void lscom::distoryTimer()
     }
 }
 
-
 void lscom::on_protocolList_currentIndexChanged(int index)
 {
     ClearWidgetChildren(this->ui->stackedWidget);
-    switch(index)
+    switch (index)
     {
     case 0:
-        //将配置面板插入到页面容器中
+        // 将配置面板插入到页面容器中
         this->ui->stackedWidget->addWidget(this->serialPanel);
         break;
     case 1:
-        //将配置面板插入到页面容器中
+        // 将配置面板插入到页面容器中
         this->ui->stackedWidget->addWidget(this->tcpPanel);
         break;
     case 2:
         break;
-    default:break;
+    default:
+        break;
     }
 }
 
@@ -415,11 +428,8 @@ void lscom::onPortDataSend(long data)
 
 lscom::~lscom()
 {
-    ClearWidgetChildren(this->ui->stackedWidget,true);
+    ClearWidgetChildren(this->ui->stackedWidget, true);
     this->distoryTimer();
     delete serviceAdapter;
     delete ui;
 }
-
-
-

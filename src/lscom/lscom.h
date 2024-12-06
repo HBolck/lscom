@@ -13,11 +13,10 @@
 
 #endif // LSCOM_H
 
-
-
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class lscom;
+namespace Ui
+{
+    class lscom;
 }
 QT_END_NAMESPACE
 
@@ -29,7 +28,6 @@ public:
     lscom(QWidget *parent = nullptr);
 
     ~lscom();
-
 
 private slots:
 
@@ -64,12 +62,17 @@ private slots:
 private:
     Ui::lscom *ui;
     /**
-     * @brief 串口配置
+     * @brief 串口配置面板
      */
     SerialPortConfigPanel *serialPanel;
-
+    /**
+     * @brief tcp参数配置面板
+     */
     TcpConfgPanel *tcpPanel;
 
+    /**
+     * @brief 服务对象
+     */
     lscom_service::ServiceAdapter *serviceAdapter;
 
     /**
@@ -81,13 +84,20 @@ private:
      */
     QString importFilePathCache;
 
-    QTimer* sendDataTimer;
+    /**
+     * @brief 发送数据定时器
+     */
+    QTimer *sendDataTimer;
+
+    /**
+     * @brief 计时器是否开启
+     */
     bool _sendTimerStart = false;
 
     /**
      * @brief 接收计数，发送计数
      */
-    long recConter,sendConter;
+    long recConter, sendConter;
 
     /**
      * @brief 版本
@@ -144,6 +154,13 @@ private:
      */
     void loadConfig(const Config &config);
 
+    /**
+     * @brief 加载子面板
+     */
+    void loadChildPanel();
 
+    /**
+     * @brief 加载协议列表
+     */
+    void loadProtocolList();
 };
-

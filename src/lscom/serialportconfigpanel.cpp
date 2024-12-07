@@ -5,6 +5,7 @@ SerialPortConfigPanel::SerialPortConfigPanel(QWidget *parent)
     : QWidget(parent), ui(new Ui::SerialPortConfigPanel)
 {
     ui->setupUi(this);
+    this->InitParam();
 }
 
 SerialPortConfigPanel::~SerialPortConfigPanel()

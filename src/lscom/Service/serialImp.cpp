@@ -14,11 +14,6 @@ lscom_service::serialImp::serialImp(LogService *log, QTextEdit *textEdit)
     this->textEdit = textEdit;
 }
 
-std::string lscom_service::serialImp::getDescription()
-{
-    return "串口类型的服务";
-}
-
 QStringList lscom_service::serialImp::getSerialPorts()
 {
     QStringList qSlist;
@@ -278,7 +273,7 @@ void lscom_service::serialImp::SendData(QByteArray data)
             this->_serialPort.write(data);
         log->setTextLog(textEdit, data, Send, Info);
         // 激发信号
-        emit this->serialSendDataSignal(data.size());
+        emit this->SendDataLengthSignal(data.size());
     }
 }
 
@@ -305,10 +300,10 @@ void lscom_service::serialImp::handleReadyRead()
         {
             log->setTextLog(this->textEdit, data, Rev, Info);
         }
-        emit this->serialRevDataSignal(data.size());
+        emit this->RevDataLengthSignal(data.size());
         if (this->isRevDataToFile)
         {
-            log->writeLogToFile(data,"REV",Info);
+            log->writeLogToFile(data, "REV", Info);
         }
     }
 }

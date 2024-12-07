@@ -13,6 +13,10 @@ CONFIG += c++17
 SOURCES += \
     Common/common.cpp \
     Delegate/qstylewithbuttondelegate.cpp \
+    Port/PortBase.cpp \
+    Service/Strategy/strategyfactory.cpp \
+    Service/TcpService/tcpclient.cpp \
+    Service/TcpService/tcpserver.cpp \
     Service/configservice.cpp \
     Service/logservice.cpp \
     Service/serialImp.cpp \
@@ -26,6 +30,9 @@ HEADERS += \
     Common/common.h \
     Delegate/qstylewithbuttondelegate.h \
     Port/PortBase.h \
+    Service/Strategy/strategyfactory.h \
+    Service/TcpService/tcpclient.h \
+    Service/TcpService/tcpserver.h \
     Service/configservice.h \
     Service/logservice.h \
     Service/serialImp.h \

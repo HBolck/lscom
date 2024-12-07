@@ -7,9 +7,9 @@ lscom::lscom(QWidget *parent)
     ui->setupUi(this);
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
-    initView();       
+    initView();
 }
-
+// ******************** 开始：页面初始化 ********************
 /**
  * @brief 初始化页面
  */
@@ -21,12 +21,12 @@ void lscom::initView()
     // 设置日志区域不可编辑
     ui->log_text->setReadOnly(true);
     this->ui->btu_open_com->setEnabled(true);
-    this->ui->btu_send_data->setEnabled(false);   
-     Config config = this->serviceAdapter->configService->InitConfigFile();
+    this->ui->btu_send_data->setEnabled(false);
+    Config config = this->serviceAdapter->configService->InitConfigFile();
     // 加载配置缓存内容
     loadConfig(config);
     // 加载子项面板对象
-    loadChildPanel(); 
+    loadChildPanel();
     loadProtocolList();
 }
 
@@ -83,7 +83,7 @@ void lscom::initTalbeView(const Config &config)
         model->appendRow(items);
     }
     QStyleWithButtonDelegate *delegate = new QStyleWithButtonDelegate(this);
-    delegate->port = this->serviceAdapter->serialService;
+    delegate->port = this->serviceAdapter->strategyFactory->PotocolImp;
     // 将模型设置给 tableView
     this->ui->tableView->setItemDelegate(delegate);
     this->ui->tableView->setModel(model);
@@ -115,6 +115,10 @@ void lscom::loadImportFile(const QString &fileName)
     }
 }
 
+/**
+ * @brief 加载配置信息
+ * @param config
+ */
 void lscom::loadConfig(const Config &config)
 {
     this->ui->sendperiod->setText(config.InputParam.SendInterval);                                                                               // 加载已有的定时发送间隔
@@ -134,7 +138,7 @@ void lscom::loadChildPanel()
 {
     this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
     // 初始化面板中的数据 将串口服务传进去
-    this->serialPanel->setSerialImp(this->serviceAdapter->serialService);
+    this->serialPanel->setSerialImp(qobject_cast<lscom_service::serialImp *>(this->serviceAdapter->strategyFactory->PotocolImp));
     this->tcpPanel = new TcpConfgPanel(this->ui->stackedWidget);
 }
 
@@ -148,6 +152,9 @@ void lscom::loadProtocolList()
     this->ui->protocolList->addItem("TcpClient");
     this->ui->protocolList->addItem("UDP");
 }
+// ******************** 结束：页面初始化 ********************
+
+// ******************** 开始：定时器 ********************
 
 /**
  * @brief 初始化定时器
@@ -198,6 +205,9 @@ void lscom::distoryTimer()
         }
     }
 }
+// ******************** 结束：定时器 ********************
+
+// ******************** 开始：页面事件响应 ********************
 
 void lscom::on_protocolList_currentIndexChanged(int index)
 {
@@ -220,28 +230,28 @@ void lscom::on_protocolList_currentIndexChanged(int index)
 }
 
 /**
- * @brief 开启串口
+ * @brief 开启端口
  */
 void lscom::on_btu_open_com_clicked()
 {
-    if (this->serviceAdapter->serialService->GetConnectStatus())
+    if (this->serviceAdapter->strategyFactory->PotocolImp->GetConnectStatus())
     {
-        this->serviceAdapter->serialService->ClosePort();
+        this->serviceAdapter->strategyFactory->PotocolImp->ClosePort();
         this->ui->btu_send_data->setEnabled(false);
-        disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
-        disconnect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
+        disconnect(this->serviceAdapter->strategyFactory->PotocolImp, &lscom_port::IPortBase::RevDataLengthSignal, this, &lscom::onPortDataReved);
+        disconnect(this->serviceAdapter->strategyFactory->PotocolImp, &lscom_port::IPortBase::SendDataLengthSignal, this, &lscom::onPortDataSend);
         this->ui->btu_open_com->setText(GLOBAL_OPEN_CONTEXT);
     }
     else
     {
-        SerialPortConfig config = this->serialPanel->GetSerialPortConfig();
-        this->serviceAdapter->serialService->initSerialPortInstance(config);
-        this->serviceAdapter->serialService->OpenPort();
-        if (this->serviceAdapter->serialService->GetConnectStatus())
+        // todo:这里需要优化一下 更改成策略模式 所有涉及到串口相关的操作都需要提炼出来
+        this->serviceAdapter->strategyFactory->PotocolImp->initSerialPortInstance(this->serialPanel->GetSerialPortConfig());
+        this->serviceAdapter->strategyFactory->PotocolImp->OpenPort();
+        if (this->serviceAdapter->strategyFactory->PotocolImp->GetConnectStatus())
         {
             this->ui->btu_send_data->setEnabled(true);
-            connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialRevDataSignal, this, &lscom::onPortDataReved);
-            connect(this->serviceAdapter->serialService, &lscom_service::serialImp::serialSendDataSignal, this, &lscom::onPortDataSend);
+            connect(this->serviceAdapter->strategyFactory->PotocolImp, &lscom_port::IPortBase::RevDataLengthSignal, this, &lscom::onPortDataReved);
+            connect(this->serviceAdapter->strategyFactory->PotocolImp, &lscom_port::IPortBase::SendDataLengthSignal, this, &lscom::onPortDataSend);
             this->ui->btu_open_com->setText(GLOBAL_CLOSE_CONTEXT);
         }
     }
@@ -252,7 +262,7 @@ void lscom::on_btu_open_com_clicked()
  */
 void lscom::on_btu_send_data_clicked()
 {
-    this->serviceAdapter->serialService->SendData(this->ui->text_send->toPlainText().toUtf8());
+    this->serviceAdapter->strategyFactory->PotocolImp->SendData(this->ui->text_send->toPlainText().toUtf8());
 }
 
 /**
@@ -281,7 +291,7 @@ void lscom::on_btu_clear_send_text_clicked()
  */
 void lscom::on_cb_hex_display_clicked(bool checked)
 {
-    this->serviceAdapter->serialService->setIsHexDisplay(checked);
+    this->serviceAdapter->strategyFactory->PotocolImp->setIsHexDisplay(checked);
 }
 /**
  * @brief hex发送勾选事件
@@ -289,7 +299,7 @@ void lscom::on_cb_hex_display_clicked(bool checked)
  */
 void lscom::on_cb_hex_send_clicked(bool checked)
 {
-    this->serviceAdapter->serialService->setIsHexSend(checked);
+    this->serviceAdapter->strategyFactory->PotocolImp->setIsHexSend(checked);
 }
 
 /**
@@ -298,7 +308,7 @@ void lscom::on_cb_hex_send_clicked(bool checked)
  */
 void lscom::on_cb_time_send_clicked(bool checked)
 {
-    if (this->serviceAdapter->serialService->GetConnectStatus())
+    if (this->serviceAdapter->strategyFactory->PotocolImp->GetConnectStatus())
     {
         if (checked)
         {
@@ -317,7 +327,7 @@ void lscom::on_cb_time_send_clicked(bool checked)
  */
 void lscom::on_cB_rev_to_file_clicked(bool checked)
 {
-    this->serviceAdapter->serialService->setIsRevDataToFile(checked);
+    this->serviceAdapter->strategyFactory->PotocolImp->setIsRevDataToFile(checked);
 }
 
 /**
@@ -359,7 +369,7 @@ void lscom::on_btu_send_file_clicked()
 {
     if (this->importFileContentCache.size() > 0)
     {
-        if (this->serviceAdapter->serialService->GetConnectStatus())
+        if (this->serviceAdapter->strategyFactory->PotocolImp->GetConnectStatus())
         {
             // 逐行发送
             if (this->ui->cB_pLineSend->isChecked())
@@ -385,7 +395,7 @@ void lscom::on_btu_send_file_clicked()
                     {
                         QCoreApplication::processEvents(); // 用于处理当前线程中的待处理事件 保证主线程不阻塞
                     }
-                    this->serviceAdapter->serialService->SendData(data.toUtf8());
+                    this->serviceAdapter->strategyFactory->PotocolImp->SendData(data.toUtf8());
 
                     // 这个操作是异步的 这里不适合
                     //  QTimer::singleShot(interval, this, [=]()
@@ -394,7 +404,7 @@ void lscom::on_btu_send_file_clicked()
             }
             else // 全量发送
             {
-                this->serviceAdapter->serialService->SendData(this->ui->text_file_area->toPlainText().toUtf8());
+                this->serviceAdapter->strategyFactory->PotocolImp->SendData(this->ui->text_file_area->toPlainText().toUtf8());
             }
         }
         else
@@ -407,6 +417,10 @@ void lscom::on_btu_send_file_clicked()
         this->serviceAdapter->logService->setTextLog(this->ui->log_text, "请选择文件后重试！", Inner, Warning);
     }
 }
+
+// ******************** 结束：页面事件响应 ********************
+
+// ******************** 开始：信号事件注册 ********************
 
 /**
  * @brief 接收数据量注册方法
@@ -425,6 +439,8 @@ void lscom::onPortDataSend(long data)
 {
     SetNumOnLabel(sendConterLabel, "S:", sendConter += data);
 }
+
+// ******************** 结束：信号事件注册 ********************
 
 lscom::~lscom()
 {

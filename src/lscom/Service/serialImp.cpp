@@ -14,121 +14,6 @@ lscom_service::serialImp::serialImp(LogService *log, QTextEdit *textEdit)
     this->textEdit = textEdit;
 }
 
-QStringList lscom_service::serialImp::getSerialPorts()
-{
-    QStringList qSlist;
-    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
-    {
-        qSlist.append(info.portName());
-        // qDebug() << "Port Name: " << info.portName();
-    }
-    return qSlist;
-}
-
-QStringList lscom_service::serialImp::getSerialBundRates()
-{
-    QStringList qslist;
-    qslist.append("1200");
-    qslist.append("2400");
-    qslist.append("4800");
-    qslist.append("9600");
-    qslist.append("19200");
-    qslist.append("38400");
-    qslist.append("57600");
-    qslist.append("115200");
-    return qslist;
-}
-
-QStringList lscom_service::serialImp::getSerialDataBits()
-{
-    QStringList qslist;
-    for (const auto &piar : dataBitsMap)
-    {
-        qslist.append(piar.first);
-    }
-    return qslist;
-}
-
-QStringList lscom_service::serialImp::getSerialStopBits()
-{
-    QStringList qslist;
-    for (const auto &piar : stopBitsMap)
-    {
-        qslist.append(piar.first);
-    }
-    return qslist;
-}
-
-QStringList lscom_service::serialImp::getSerialParity()
-{
-    QStringList qslist;
-    qslist.append("None");
-    qslist.append("Odd");
-    qslist.append("Even");
-    return qslist;
-}
-
-/**
- * @brief serialImp::mathBaudRate
- * @param baudRateStr
- * @return
- */
-QSerialPort::BaudRate lscom_service::serialImp::mathBaudRate(const QString &baudRateStr)
-{
-    auto it = baudRateMap.find(baudRateStr);
-    if (it != baudRateMap.end())
-    {
-        return it->second;
-    }
-    else
-    {
-        // 处理无效的输入
-        return QSerialPort::Baud9600;
-    }
-}
-
-QSerialPort::DataBits lscom_service::serialImp::mathDataBits(const QString &str)
-{
-    auto it = dataBitsMap.find(str);
-    if (it != dataBitsMap.end())
-    {
-        return it->second;
-    }
-    else
-    {
-        // 处理无效的输入
-        return QSerialPort::Data8;
-    }
-}
-
-QSerialPort::StopBits lscom_service::serialImp::mathStopBits(const QString &str)
-{
-    auto it = stopBitsMap.find(str);
-    if (it != stopBitsMap.end())
-    {
-        return it->second;
-    }
-    else
-    {
-        // 处理无效的输入
-        return QSerialPort::OneStop;
-    }
-}
-
-QSerialPort::Parity lscom_service::serialImp::mathParity(const QString &str)
-{
-    auto it = parityMap.find(str);
-    if (it != parityMap.end())
-    {
-        return it->second;
-    }
-    else
-    {
-        // 处理无效的输入
-        return QSerialPort::NoParity;
-    }
-}
-
 bool lscom_service::serialImp::isHexSend() const
 {
     return _isHexSend;
@@ -154,18 +39,14 @@ void lscom_service::serialImp::setIsRevDataToFile(bool newIsRevDataToFile)
     isRevDataToFile = newIsRevDataToFile;
 }
 
-/**
- * @brief 初始化串口对象参数
- * @param config
- */
-void lscom_service::serialImp::initSerialPortInstance(SerialPortConfig config)
+void lscom_service::serialImp::setConfigPanel(QWidget *widget)
 {
-    this->_serialPort.setBaudRate(config.Baudrate);
-    this->_serialPort.setDataBits(config.DataBits);
-    this->_serialPort.setStopBits(config.StopBits);
-    this->_serialPort.setParity(config.Parity);
-    this->_serialPort.setPortName(config.PortName);
-    this->_isConfiged = true;
+    this->serialPanel = qobject_cast<SerialPortConfigPanel *>(widget);
+    if (!serialPanel)
+    {
+        log->setTextLog(this->textEdit, "初始化配置面板失败，检查代码", Inner, Error);
+        return;
+    }
 }
 
 /**
@@ -187,6 +68,14 @@ PortType lscom_service::serialImp::getProtType() const
  */
 void lscom_service::serialImp::OpenPort()
 {
+    auto config = this->serialPanel->GetSerialPortConfig();
+    this->_serialPort.setBaudRate(config.Baudrate);
+    this->_serialPort.setDataBits(config.DataBits);
+    this->_serialPort.setStopBits(config.StopBits);
+    this->_serialPort.setParity(config.Parity);
+    this->_serialPort.setPortName(config.PortName);
+    this->_isConfiged = true;
+
     if ((this->GetConnectStatus() == false) && this->_isConfiged)
     {
         try

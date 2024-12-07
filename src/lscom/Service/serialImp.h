@@ -4,7 +4,6 @@
 #include <windows.h>
 #include <QMainWindow>
 #include <QDebug>
-#include <map>
 #include <QObject>
 #include <QCoreApplication>
 #include "Port/PortBase.h"
@@ -43,21 +42,17 @@ namespace lscom_service
           bool GetConnectStatus() override;
           PortType getProtType() const override;
           void SendData(QByteArray data) override;
-          QStringList getSerialPorts() override;
-          QStringList getSerialBundRates() override;
-          QStringList getSerialDataBits() override;
-          QStringList getSerialStopBits() override;
-          QStringList getSerialParity() override;
-          QSerialPort::BaudRate mathBaudRate(const QString &str) override;
-          QSerialPort::DataBits mathDataBits(const QString &str) override;
-          QSerialPort::StopBits mathStopBits(const QString &str) override;
-          QSerialPort::Parity mathParity(const QString &str) override;
-          void initSerialPortInstance(SerialPortConfig config) override;
+
           bool isHexDisplay() const override;
           void setIsHexDisplay(bool newIsHexDisplay) override;
           bool isHexSend() const override;
           void setIsHexSend(bool newIsHexSend) override;
           void setIsRevDataToFile(bool newIsRevDataToFile) override;
+
+          // IPortBase interface
+     public:
+          void setConfigPanel(QWidget *widget) override;
+
      };
 }
 

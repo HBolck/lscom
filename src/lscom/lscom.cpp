@@ -138,12 +138,14 @@ void lscom::loadChildPanel()
 {
     this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
     // 初始化面板中的数据 将串口服务传进去
-    this->serialPanel->setSerialImp(qobject_cast<lscom_service::serialImp *>(this->serviceAdapter->strategyFactory->PotocolImp));
+    this->serviceAdapter->strategyFactory->PotocolImp->setConfigPanel(this->serialPanel);
+    std::map<Protocol,QWidget*> panels = {{SerialPort,this->serialPanel}};
+    this->serviceAdapter->strategyFactory->InitConfigPanel(panels);//填充配置面板对象
     this->tcpPanel = new TcpConfgPanel(this->ui->stackedWidget);
 }
 
 /**
- * @brief 加载子面板
+ * @brief 加载协议内容
  */
 void lscom::loadProtocolList()
 {
@@ -244,8 +246,6 @@ void lscom::on_btu_open_com_clicked()
     }
     else
     {
-        // todo:这里需要优化一下 更改成策略模式 所有涉及到串口相关的操作都需要提炼出来
-        this->serviceAdapter->strategyFactory->PotocolImp->initSerialPortInstance(this->serialPanel->GetSerialPortConfig());
         this->serviceAdapter->strategyFactory->PotocolImp->OpenPort();
         if (this->serviceAdapter->strategyFactory->PotocolImp->GetConnectStatus())
         {

@@ -3,7 +3,6 @@
 
 #include <QCoreApplication>
 #include <QLabel>
-
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QVariant>
@@ -16,6 +15,8 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QStackedWidget>
+#include <QSerialPort>
+#include <QSerialPortInfo>
 
 // 默认标题
 #define GLOBAL_TITLE "lscom串口工具"
@@ -26,6 +27,31 @@
 #define GLOBAL_IMPORT_FILE_EXT "Text Files (*.txt)"
 #define GLOBAL_OPEN_CONTEXT "开启端口"
 #define GLOBAL_CLOSE_CONTEXT "关闭端口"
+using TaskCallBack = std::function<void()>;
+/**
+ * @brief The SerialPortConfig
+ */
+struct SerialPortConfig
+{
+    QSerialPort::BaudRate Baudrate;
+    QSerialPort::DataBits DataBits;
+    QSerialPort::StopBits StopBits;
+    QSerialPort::Parity Parity;
+    QString PortName;
+};
+
+/**
+ * @brief 端口参数集
+ */
+struct SerialPortParam
+{
+    QStringList PortNames;
+    QStringList Baudrates;
+    QStringList DataBites;
+    QStringList StopBites;
+    QStringList Parities;
+};
+
 
 /**
  * @brief 输入参数的数据
@@ -70,8 +96,6 @@ struct InputParam
      * @brief 文件发送行间隔
      */
     QString FileSendLineInterval;
-
-
 };
 
 /**
@@ -176,6 +200,6 @@ bool StringIsNllOrEmpty(const QString &str);
  * @param layout
  * @param isFree
  */
-void ClearWidgetChildren(QStackedWidget *layout,bool isFree = false);
+void ClearWidgetChildren(QStackedWidget *layout, bool isFree = false);
 
 #endif // COMMON_H

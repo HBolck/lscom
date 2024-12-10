@@ -8,7 +8,11 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "qstackedwidget": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "vector": "cpp"
     },
     "cmake.options.statusBarVisibility": "hidden"
 }

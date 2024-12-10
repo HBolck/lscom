@@ -7,7 +7,7 @@ lscom::lscom(QWidget *parent)
     ui->setupUi(this);
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
-    initView();
+    initView();    
 }
 // ******************** 开始：页面初始化 ********************
 /**
@@ -136,12 +136,11 @@ void lscom::loadConfig(const Config &config)
  */
 void lscom::loadChildPanel()
 {
+    // 初始化面板
     this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
-    // 初始化面板中的数据 将串口服务传进去
-    this->serviceAdapter->strategyFactory->PotocolImp->setConfigPanel(this->serialPanel);
-    std::map<Protocol,QWidget*> panels = {{SerialPort,this->serialPanel}};
-    this->serviceAdapter->strategyFactory->InitConfigPanel(panels);//填充配置面板对象
-    this->tcpPanel = new TcpConfgPanel(this->ui->stackedWidget);
+    // std::map<Protocol, QWidget *> panels = {{SerialPort, this->serialPanel}};
+    this->serviceAdapter->strategyFactory->InitConfigPanel(
+        {{SerialPort, this->serialPanel} /*, {TcpServer, this->tcpPanel}*/}); // 填充配置面板对象
 }
 
 /**
@@ -149,10 +148,10 @@ void lscom::loadChildPanel()
  */
 void lscom::loadProtocolList()
 {
-    this->ui->protocolList->addItem("串口");
-    this->ui->protocolList->addItem("TcpService");
-    this->ui->protocolList->addItem("TcpClient");
-    this->ui->protocolList->addItem("UDP");
+    this->ui->protocolList->addItem("SerialPort");
+    // this->ui->protocolList->addItem("TcpService");
+    // this->ui->protocolList->addItem("TcpClient");
+    // this->ui->protocolList->addItem("UDP");
 }
 // ******************** 结束：页面初始化 ********************
 
@@ -219,10 +218,11 @@ void lscom::on_protocolList_currentIndexChanged(int index)
     case 0:
         // 将配置面板插入到页面容器中
         this->ui->stackedWidget->addWidget(this->serialPanel);
+        this->serviceAdapter->strategyFactory->PointToPotocol(SerialPort); // 指向串口协议
         break;
     case 1:
         // 将配置面板插入到页面容器中
-        this->ui->stackedWidget->addWidget(this->tcpPanel);
+        // this->ui->stackedWidget->addWidget(this->tcpPanel);
         break;
     case 2:
         break;

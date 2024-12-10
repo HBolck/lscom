@@ -7,10 +7,10 @@
 namespace strategy_factory
 {
 
-/*
- * 这个工厂默认构建已知的协议实例
- * 通过指定的策略指向不同的实例，每个实例中的行为方法名和参数表相同，但是实现不同
- */
+    /*
+     * 这个工厂默认构建已知的协议实例
+     * 通过指定的策略指向不同的实例，每个实例中的行为方法名和参数表相同，但是实现不同
+     */
 
     class StrategyFactory
     {
@@ -23,6 +23,13 @@ namespace strategy_factory
          * @return 实例的指针
          */
         lscom_port::IPortBase *PotocolInstance(Protocol protocol);
+
+        /**
+         * @brief 指向协议
+         * @param protocol
+         */
+        void PointToPotocol(Protocol protocol);
+
         /**
          * @brief 协议的实现指针
          */
@@ -32,13 +39,14 @@ namespace strategy_factory
          * @brief 初始化容器中协议实例的对象
          * @param widgets
          */
-        void InitConfigPanel(std::map<Protocol,QWidget*> widgets);
-
+        void InitConfigPanel(std::map<Protocol, QWidget *> widgets);
 
         ~StrategyFactory();
 
     private:
         std::map<Protocol, lscom_port::IPortBase *> portImpCache;
+        lscom_service::LogService *log;
+        QTextEdit *textEdit;
     };
 }
 

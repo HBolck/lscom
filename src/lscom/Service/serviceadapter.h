@@ -15,7 +15,6 @@ namespace lscom_service
         ServiceAdapter();
         ServiceAdapter(QTextEdit *textEdit);
         strategy_factory::StrategyFactory *strategyFactory;
-        // lscom_service::serialImp *serialService;
         lscom_service::LogService *logService;
         lscom_service::ConfigService *configService;
 

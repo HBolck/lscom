@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+#include <QIcon>
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +19,7 @@ int main(int argc, char *argv[])
         }
     }
     lscom w;
+    w.setWindowIcon(QIcon(":/icon/ico.ico"));
     w.show();
     return a.exec();
 }

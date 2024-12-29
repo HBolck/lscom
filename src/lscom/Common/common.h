@@ -19,7 +19,7 @@
 #include <QSerialPortInfo>
 
 // 默认标题
-#define GLOBAL_TITLE "lscom串口工具"
+#define GLOBAL_TITLE "lscom工具"
 // 默认配置文件名称
 #define GLOBAL_CONFIG_FILE_NAME "lscom.json"
 // 源码地址

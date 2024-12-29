@@ -59,6 +59,8 @@ private slots:
 
     void on_protocolList_currentIndexChanged(int index);
 
+    void on_btu_clear_file_clicked();
+
 private:
     Ui::lscom *ui;
     /**

@@ -42,13 +42,11 @@ namespace lscom_service
           bool GetConnectStatus() override;
           PortType getProtType() const override;
           void SendData(QByteArray data) override;
-
           bool isHexDisplay() const override;
           void setIsHexDisplay(bool newIsHexDisplay) override;
           bool isHexSend() const override;
           void setIsHexSend(bool newIsHexSend) override;
           void setIsRevDataToFile(bool newIsRevDataToFile) override;
-
           // IPortBase interface
      public:
           void setConfigPanel(QWidget *widget) override;

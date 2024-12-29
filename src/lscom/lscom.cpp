@@ -23,11 +23,13 @@ void lscom::initView()
     this->ui->btu_open_com->setEnabled(true);
     this->ui->btu_send_data->setEnabled(false);
     Config config = this->serviceAdapter->configService->InitConfigFile();
-    // 加载配置缓存内容
-    loadConfig(config);
+
     // 加载子项面板对象
     loadChildPanel();
+    // 加载配置缓存内容
+    loadConfig(config);
     loadProtocolList();
+    this->serviceAdapter->logService->setTextLog(this->ui->log_text, "======欢迎使用lscom工具======", Inner, Info);
 }
 
 /**
@@ -83,6 +85,7 @@ void lscom::initTalbeView(const Config &config)
         model->appendRow(items);
     }
     QStyleWithButtonDelegate *delegate = new QStyleWithButtonDelegate(this);
+    //将协议对象指针传递进委托模型中
     delegate->port = this->serviceAdapter->strategyFactory->PotocolImp;
     // 将模型设置给 tableView
     this->ui->tableView->setItemDelegate(delegate);
@@ -106,11 +109,6 @@ void lscom::loadImportFile(const QString &fileName)
             this->ui->text_file_area->setText(ReadFileContents(fileName));
             // 将文件路径缓存到内存中
             this->importFilePathCache = fileName;
-            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "文件打开成功", Inner, Info);
-        }
-        else
-        {
-            this->serviceAdapter->logService->setTextLog(this->ui->log_text, "未能找到指定名称的文件", Inner, Error);
         }
     }
 }
@@ -141,6 +139,8 @@ void lscom::loadChildPanel()
     // std::map<Protocol, QWidget *> panels = {{SerialPort, this->serialPanel}};
     this->serviceAdapter->strategyFactory->InitConfigPanel(
         {{SerialPort, this->serialPanel} /*, {TcpServer, this->tcpPanel}*/}); // 填充配置面板对象
+
+    this->serviceAdapter->strategyFactory->PointToPotocol(SerialPort); // 默认指向串口协议
 }
 
 /**
@@ -418,6 +418,16 @@ void lscom::on_btu_send_file_clicked()
     }
 }
 
+/**
+ * @brief 清空文件信息
+ */
+void lscom::on_btu_clear_file_clicked()
+{
+    this->ui->importFileName->clear();
+    this->ui->text_file_area->clear();
+    this->importFilePathCache.clear();
+}
+
 // ******************** 结束：页面事件响应 ********************
 
 // ******************** 开始：信号事件注册 ********************
@@ -449,3 +459,6 @@ lscom::~lscom()
     delete serviceAdapter;
     delete ui;
 }
+
+
+

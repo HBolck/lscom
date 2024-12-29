@@ -8,14 +8,15 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include "Delegate/qstylewithbuttondelegate.h"
+#include "serialportconfigpanel.h"
+#include "tcpconfgpanel.h"
 
 #endif // LSCOM_H
 
-
-
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class lscom;
+namespace Ui
+{
+    class lscom;
 }
 QT_END_NAMESPACE
 
@@ -28,7 +29,6 @@ public:
 
     ~lscom();
 
-
 private slots:
 
     void onPortDataReved(long data);
@@ -36,8 +36,6 @@ private slots:
     void onPortDataSend(long data);
 
     void on_btu_open_com_clicked();
-
-    void on_btu_close_com_clicked();
 
     void on_btu_send_data_clicked();
 
@@ -59,10 +57,24 @@ private slots:
 
     void on_btu_send_file_clicked();
 
+    void on_protocolList_currentIndexChanged(int index);
+
+    void on_btu_clear_file_clicked();
+
 private:
     Ui::lscom *ui;
-    // lscom_service::serialImp *serial;
-    // lscom_service::LogService *log;
+    /**
+     * @brief 串口配置面板
+     */
+    SerialPortConfigPanel *serialPanel;
+    /**
+     * @brief tcp参数配置面板
+     */
+    TcpConfgPanel *tcpPanel;
+
+    /**
+     * @brief 服务对象
+     */
     lscom_service::ServiceAdapter *serviceAdapter;
 
     /**
@@ -74,13 +86,20 @@ private:
      */
     QString importFilePathCache;
 
-    QTimer* sendDataTimer;
+    /**
+     * @brief 发送数据定时器
+     */
+    QTimer *sendDataTimer;
+
+    /**
+     * @brief 计时器是否开启
+     */
     bool _sendTimerStart = false;
 
     /**
      * @brief 接收计数，发送计数
      */
-    long recConter,sendConter;
+    long recConter, sendConter;
 
     /**
      * @brief 版本
@@ -136,5 +155,14 @@ private:
      * @param config
      */
     void loadConfig(const Config &config);
-};
 
+    /**
+     * @brief 加载子面板
+     */
+    void loadChildPanel();
+
+    /**
+     * @brief 加载协议列表
+     */
+    void loadProtocolList();
+};

@@ -25,13 +25,13 @@ Config lscom_service::ConfigService::InitConfigFile()
         list.append(QString("双击添加数据"));
     }
     config.InputParam.SendDataList = list;
-    if (checkFileExist(GLOBAL_CONFIG_FILE_NAME) == false)
+    if (CheckFileExist(GLOBAL_CONFIG_FILE_NAME) == false)
     {
         this->WriteConfigToFile(config);
     }
     else
     {
-        QString fileContent = readFileContents(GLOBAL_CONFIG_FILE_NAME);
+        QString fileContent = ReadFileContents(GLOBAL_CONFIG_FILE_NAME);
         if (fileContent.isEmpty())
         {
             this->WriteConfigToFile(config);
@@ -39,7 +39,7 @@ Config lscom_service::ConfigService::InitConfigFile()
         }
         else
         {
-            bool flag = jsonToConfig(fileContent, config);
+            bool flag = JsonToConfig(fileContent, config);
             if (flag == true)
                 return config;
             else
@@ -54,6 +54,6 @@ Config lscom_service::ConfigService::InitConfigFile()
 
 void lscom_service::ConfigService::WriteConfigToFile(Config &config)
 {
-    auto json = configToJson(config);
-    writeJsonToFile(GLOBAL_CONFIG_FILE_NAME, json);
+    auto json = ConfigToJson(config);
+    WriteJsonToFile(GLOBAL_CONFIG_FILE_NAME, json);
 }

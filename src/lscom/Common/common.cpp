@@ -7,7 +7,7 @@
  * @param value 用于存储转换结果的 uint 指针
  * @return 转换是否成功
  */
-bool isQStringToUint(const QString &str, uint *value)
+bool IsQStringToUint(const QString &str, uint *value)
 {
     bool ok;
     *value = str.toUInt(&ok);
@@ -20,7 +20,7 @@ bool isQStringToUint(const QString &str, uint *value)
  * @brief 获取QString格式的HEX字符串内容
  * @param data
  */
-QString getQStringHex(QByteArray data)
+QString GetQStringHex(QByteArray data)
 {
     QString hexString;
     for (char byte : data)
@@ -30,12 +30,12 @@ QString getQStringHex(QByteArray data)
     return hexString;
 }
 
-void setNumOnLabel(QLabel *lel, QString str, long num)
+void SetNumOnLabel(QLabel *lel, QString str, long num)
 {
     lel->setText(str + QString::number(num));
 }
 
-QString mapToJson(const QMap<QString, QString> &map)
+QString MapToJson(const QMap<QString, QString> &map)
 {
     QJsonObject jsonObject;
     for (auto it = map.begin(); it != map.end(); ++it)
@@ -46,7 +46,7 @@ QString mapToJson(const QMap<QString, QString> &map)
     return jsonDoc.toJson(QJsonDocument::Compact);
 }
 
-QString configToJson(const Config &config)
+QString ConfigToJson(const Config &config)
 {
     QJsonObject jsonConfig;
     QJsonObject jsonParam;
@@ -68,7 +68,7 @@ QString configToJson(const Config &config)
     return jsonDoc.toJson(QJsonDocument::Compact);
 }
 
-void writeJsonToFile(const QString &fileName, const QString &json)
+void WriteJsonToFile(const QString &fileName, const QString &json)
 {
     QFile file(fileName);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -79,7 +79,7 @@ void writeJsonToFile(const QString &fileName, const QString &json)
     }
 }
 
-bool checkFileExist(const QString &fileName)
+bool CheckFileExist(const QString &fileName)
 {
     if (fileName.isNull())
         return false;
@@ -90,7 +90,7 @@ bool checkFileExist(const QString &fileName)
     return file.exists();
 }
 
-bool createFolderIfNotExist(const QString &folderPath)
+bool CreateFolderIfNotExist(const QString &folderPath)
 {
     QDir dir(folderPath);
     if (!dir.exists())
@@ -112,13 +112,13 @@ bool createFolderIfNotExist(const QString &folderPath)
  * @param fileName
  * @return
  */
-QString readFileContents(const QString &fileName)
+QString ReadFileContents(const QString &fileName)
 {
     if (fileName.isNull())
         return "";
     if (fileName.isEmpty())
         return "";
-    if (checkFileExist(fileName) == false)
+    if (CheckFileExist(fileName) == false)
         return "";
     QFile file(fileName);
 
@@ -139,14 +139,14 @@ QString readFileContents(const QString &fileName)
  * @param fileName
  * @return
  */
-QList<QString> readFileContentList(const QString &fileName)
+QList<QString> ReadFileContentList(const QString &fileName)
 {
     QList<QString> list;
     if (fileName.isNull())
         return list;
     if (fileName.isEmpty())
         return list;
-    if (checkFileExist(fileName) == false)
+    if (CheckFileExist(fileName) == false)
         return list;
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -163,7 +163,7 @@ QList<QString> readFileContentList(const QString &fileName)
     return list;
 }
 
-bool jsonToConfig(const QString &jsonStr, Config &config)
+bool JsonToConfig(const QString &jsonStr, Config &config)
 {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonStr.toUtf8());
     if (!jsonDoc.isObject())
@@ -198,7 +198,22 @@ bool jsonToConfig(const QString &jsonStr, Config &config)
     return true;
 }
 
-bool stringIsNllOrEmpty(const QString &str)
+bool StringIsNllOrEmpty(const QString &str)
 {
     return str.isEmpty() || str.isNull();
+}
+
+void ClearWidgetChildren(QStackedWidget *widgetParent, bool isFree)
+{
+    QList<QObject *> children = widgetParent->children();
+    for (QObject *child : children)
+    {
+        QWidget *widget = qobject_cast<QWidget *>(child);
+        if (widget)
+        {
+            widgetParent->removeWidget(widget);
+            if (isFree)
+                widget->deleteLater();
+        }
+    }
 }

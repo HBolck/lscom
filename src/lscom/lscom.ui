@@ -19,178 +19,13 @@
   <property name="windowTitle">
    <string>lscom</string>
   </property>
-  <property name="windowIcon">
-   <iconset theme="insert-link"/>
+  <property name="iconSize">
+   <size>
+    <width>30</width>
+    <height>30</height>
+   </size>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>620</x>
-      <y>390</y>
-      <width>231</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>串口设置</string>
-    </property>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>30</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>串口号</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comPortBox">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>30</y>
-       <width>141</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_Parity">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>150</y>
-       <width>141</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_BaudRate">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>60</y>
-       <width>141</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_StopBits">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>120</y>
-       <width>141</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_3">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>90</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>数据位</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_DateBits">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>90</y>
-       <width>141</width>
-       <height>27</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>150</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>奇偶校验</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>60</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>波特率</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_4">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>120</y>
-       <width>71</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>停止位</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </widget>
    <widget class="QPushButton" name="btu_send_data">
     <property name="geometry">
      <rect>
@@ -264,7 +99,7 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QPushButton" name="btu_send_open_file">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>430</x>
       <y>340</y>
       <width>71</width>
       <height>28</height>
@@ -319,36 +154,22 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QPushButton" name="btu_open_com">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>90</x>
       <y>370</y>
       <width>91</width>
       <height>31</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 170, 0);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>开启端口</string>
-    </property>
-    <property name="autoDefault">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btu_close_com">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>370</y>
-      <width>92</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color: rgb(170, 0, 0);</string>
-    </property>
-    <property name="text">
-     <string>关闭端口</string>
     </property>
     <property name="autoDefault">
      <bool>false</bool>
@@ -429,9 +250,9 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QCheckBox" name="cB_pLineSend">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>630</x>
       <y>340</y>
-      <width>71</width>
+      <width>101</width>
       <height>25</height>
      </rect>
     </property>
@@ -442,7 +263,7 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QLineEdit" name="pLineInterval">
     <property name="geometry">
      <rect>
-      <x>660</x>
+      <x>720</x>
       <y>340</y>
       <width>71</width>
       <height>25</height>
@@ -452,7 +273,7 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>740</x>
+      <x>800</x>
       <y>340</y>
       <width>41</width>
       <height>19</height>
@@ -465,7 +286,7 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QPushButton" name="btu_send_file">
     <property name="geometry">
      <rect>
-      <x>510</x>
+      <x>500</x>
       <y>340</y>
       <width>71</width>
       <height>28</height>
@@ -478,9 +299,9 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QTextEdit" name="text_file_area">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>430</x>
       <y>390</y>
-      <width>171</width>
+      <width>191</width>
       <height>181</height>
      </rect>
     </property>
@@ -495,9 +316,9 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QCheckBox" name="cB_pLineSend_loop">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>630</x>
       <y>360</y>
-      <width>71</width>
+      <width>91</width>
       <height>25</height>
      </rect>
     </property>
@@ -508,14 +329,49 @@ border-color: rgb(98, 98, 98);</string>
    <widget class="QLineEdit" name="importFileName">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>430</x>
       <y>370</y>
-      <width>141</width>
+      <width>191</width>
       <height>21</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="protocolList">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>370</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>390</y>
+      <width>211</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <widget class="QWidget" name="page"/>
+    <widget class="QWidget" name="page_2"/>
+   </widget>
+   <widget class="QPushButton" name="btu_clear_file">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>340</y>
+      <width>51</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>清空</string>
     </property>
    </widget>
   </widget>
@@ -525,7 +381,7 @@ border-color: rgb(98, 98, 98);</string>
      <x>0</x>
      <y>0</y>
      <width>855</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>

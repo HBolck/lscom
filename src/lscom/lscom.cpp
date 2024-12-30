@@ -138,9 +138,7 @@ void lscom::loadChildPanel()
     this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
     // std::map<Protocol, QWidget *> panels = {{SerialPort, this->serialPanel}};
     this->serviceAdapter->strategyFactory->InitConfigPanel(
-        {{SerialPort, this->serialPanel} /*, {TcpServer, this->tcpPanel}*/}); // 填充配置面板对象
-
-    this->serviceAdapter->strategyFactory->PointToPotocol(SerialPort); // 默认指向串口协议
+        {{SerialPort, this->serialPanel} /*, {TcpServer, this->tcpPanel}*/}); // 填充配置面板对象    
 }
 
 /**

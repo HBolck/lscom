@@ -323,7 +323,7 @@ border-color: rgb(98, 98, 98);</string>
      </rect>
     </property>
     <property name="text">
-     <string>循环发送</string>
+     <string>内容循环</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="importFileName">

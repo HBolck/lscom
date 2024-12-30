@@ -104,11 +104,11 @@ void lscom::loadImportFile(const QString &fileName)
         if (CheckFileExist(fileName))
         {
             // 导入缓存
-            this->importFileContentCache = ReadFileContentList(fileName);
+            this->serviceAdapter->fileService->importFileContentCache = ReadFileContentList(fileName);
+            // 将文件路径缓存到内存中
+            this->serviceAdapter->fileService->importFilePathCache = fileName;
             // 显示页面中文本内容
             this->ui->text_file_area->setText(ReadFileContents(fileName));
-            // 将文件路径缓存到内存中
-            this->importFilePathCache = fileName;
         }
     }
 }
@@ -336,7 +336,7 @@ void lscom::on_btu_set_param_clicked()
     Config config;
     config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
     config.InputParam.SendInterval = this->ui->sendperiod->text();
-    config.InputParam.ImportFilePath = this->importFilePathCache;
+    config.InputParam.ImportFilePath = this->serviceAdapter->fileService->importFilePathCache;
     config.InputParam.IsPLineSend = this->ui->cB_pLineSend->isChecked() ? "1" : "0";         // 是否逐行发送
     config.InputParam.IsFileLoopSend = this->ui->cB_pLineSend_loop->isChecked() ? "1" : "0"; // 是否循环发送
     config.InputParam.FileSendLineInterval = this->ui->pLineInterval->text();                // 逐行发送间隔
@@ -365,7 +365,7 @@ void lscom::on_btu_send_open_file_clicked()
  */
 void lscom::on_btu_send_file_clicked()
 {
-    if (this->importFileContentCache.size() > 0)
+    if (this->serviceAdapter->fileService->importFileContentCache.size() > 0)
     {
         if (this->serviceAdapter->strategyFactory->PotocolImp->GetConnectStatus())
         {
@@ -385,20 +385,7 @@ void lscom::on_btu_send_file_clicked()
                     this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！[默认使用1000ms作为之间间隔]", Inner, Error);
                     interval = 1000;
                 }
-                QElapsedTimer timer;
-                for (const QString &data : importFileContentCache)
-                {
-                    timer.restart();
-                    while (timer.elapsed() < interval)
-                    {
-                        QCoreApplication::processEvents(); // 用于处理当前线程中的待处理事件 保证主线程不阻塞
-                    }
-                    this->serviceAdapter->strategyFactory->PotocolImp->SendData(data.toUtf8());
-
-                    // 这个操作是异步的 这里不适合
-                    //  QTimer::singleShot(interval, this, [=]()
-                    //                     { this->serviceAdapter->serialService->SendData(data.toUtf8()); });
-                }
+                this->serviceAdapter->fileService->SendFileByLine(interval);
             }
             else // 全量发送
             {
@@ -421,9 +408,9 @@ void lscom::on_btu_send_file_clicked()
  */
 void lscom::on_btu_clear_file_clicked()
 {
-    this->ui->importFileName->clear();
+    this->serviceAdapter->fileService->fileClear();
     this->ui->text_file_area->clear();
-    this->importFilePathCache.clear();
+    this->ui->importFileName->clear();
 }
 
 // ******************** 结束：页面事件响应 ********************

@@ -9,7 +9,7 @@ lscom_service::ServiceAdapter::ServiceAdapter(QTextEdit *textEdit)
     this->logService = new lscom_service::LogService();
     this->strategyFactory = new strategy_factory::StrategyFactory(this->logService, textEdit);
     this->configService = new lscom_service::ConfigService();
-    this->fileService = new lscom_service::FileService();
+    this->fileService = new lscom_service::FileService(this->strategyFactory);
 }
 
 lscom_service::ServiceAdapter::~ServiceAdapter()

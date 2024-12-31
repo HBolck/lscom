@@ -7,7 +7,7 @@ lscom::lscom(QWidget *parent)
     ui->setupUi(this);
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
-    initView();    
+    initView();
 }
 // ******************** 开始：页面初始化 ********************
 /**
@@ -85,7 +85,7 @@ void lscom::initTalbeView(const Config &config)
         model->appendRow(items);
     }
     QStyleWithButtonDelegate *delegate = new QStyleWithButtonDelegate(this);
-    //将协议对象指针传递进委托模型中
+    // 将协议对象指针传递进委托模型中
     delegate->port = this->serviceAdapter->strategyFactory->PotocolImp;
     // 将模型设置给 tableView
     this->ui->tableView->setItemDelegate(delegate);
@@ -138,7 +138,7 @@ void lscom::loadChildPanel()
     this->serialPanel = new SerialPortConfigPanel(this->ui->stackedWidget);
     // std::map<Protocol, QWidget *> panels = {{SerialPort, this->serialPanel}};
     this->serviceAdapter->strategyFactory->InitConfigPanel(
-        {{SerialPort, this->serialPanel} /*, {TcpServer, this->tcpPanel}*/}); // 填充配置面板对象    
+        {{SerialPort, this->serialPanel} /*, {TcpServer, this->tcpPanel}*/}); // 填充配置面板对象
 }
 
 /**
@@ -385,7 +385,18 @@ void lscom::on_btu_send_file_clicked()
                     this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！[默认使用1000ms作为之间间隔]", Inner, Error);
                     interval = 1000;
                 }
-                this->serviceAdapter->fileService->SendFileByLine(interval);
+                //是否循环发送
+                if (this->ui->cB_pLineSend_loop->isChecked())
+                {
+                    while (this->ui->cB_pLineSend_loop->isChecked())
+                    {
+                        this->serviceAdapter->fileService->SendFileByLine(interval);
+                    }
+                }
+                else
+                {
+                    this->serviceAdapter->fileService->SendFileByLine(interval);
+                }
             }
             else // 全量发送
             {
@@ -444,6 +455,3 @@ lscom::~lscom()
     delete serviceAdapter;
     delete ui;
 }
-
-
-

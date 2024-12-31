@@ -18,6 +18,7 @@ SOURCES += \
     Service/TcpService/tcpclient.cpp \
     Service/TcpService/tcpserver.cpp \
     Service/configservice.cpp \
+    Service/fileservice.cpp \
     Service/logservice.cpp \
     Service/serialImp.cpp \
     Service/serviceadapter.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     Service/TcpService/tcpclient.h \
     Service/TcpService/tcpserver.h \
     Service/configservice.h \
+    Service/fileservice.h \
     Service/logservice.h \
     Service/serialImp.h \
     Service/serviceadapter.h \

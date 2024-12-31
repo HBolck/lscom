@@ -7,7 +7,7 @@ lscom::lscom(QWidget *parent)
     ui->setupUi(this);
     // 构建服务类对象
     this->serviceAdapter = new lscom_service::ServiceAdapter(this->ui->log_text);
-    initView();    
+    initView();
 }
 // ******************** 开始：页面初始化 ********************
 /**
@@ -48,7 +48,7 @@ void lscom::initStatusBar()
 
     this->ui->statusbar->addWidget(sourceCodelinkLable);
     this->version = new QLabel(this);
-    this->version->setText("v1.2.3");
+    this->version->setText("v1.2.4");
     version->setMinimumSize(40, 20);
 
     this->ui->statusbar->addWidget(version);
@@ -85,7 +85,7 @@ void lscom::initTalbeView(const Config &config)
         model->appendRow(items);
     }
     QStyleWithButtonDelegate *delegate = new QStyleWithButtonDelegate(this);
-    //将协议对象指针传递进委托模型中
+    // 将协议对象指针传递进委托模型中
     delegate->port = this->serviceAdapter->strategyFactory->PotocolImp;
     // 将模型设置给 tableView
     this->ui->tableView->setItemDelegate(delegate);
@@ -104,11 +104,11 @@ void lscom::loadImportFile(const QString &fileName)
         if (CheckFileExist(fileName))
         {
             // 导入缓存
-            this->importFileContentCache = ReadFileContentList(fileName);
+            this->serviceAdapter->fileService->importFileContentCache = ReadFileContentList(fileName);
+            // 将文件路径缓存到内存中
+            this->serviceAdapter->fileService->importFilePathCache = fileName;
             // 显示页面中文本内容
             this->ui->text_file_area->setText(ReadFileContents(fileName));
-            // 将文件路径缓存到内存中
-            this->importFilePathCache = fileName;
         }
     }
 }
@@ -139,8 +139,6 @@ void lscom::loadChildPanel()
     // std::map<Protocol, QWidget *> panels = {{SerialPort, this->serialPanel}};
     this->serviceAdapter->strategyFactory->InitConfigPanel(
         {{SerialPort, this->serialPanel} /*, {TcpServer, this->tcpPanel}*/}); // 填充配置面板对象
-
-    this->serviceAdapter->strategyFactory->PointToPotocol(SerialPort); // 默认指向串口协议
 }
 
 /**
@@ -338,7 +336,7 @@ void lscom::on_btu_set_param_clicked()
     Config config;
     config.InputParam.SendAreaData = this->ui->text_send->toPlainText();
     config.InputParam.SendInterval = this->ui->sendperiod->text();
-    config.InputParam.ImportFilePath = this->importFilePathCache;
+    config.InputParam.ImportFilePath = this->serviceAdapter->fileService->importFilePathCache;
     config.InputParam.IsPLineSend = this->ui->cB_pLineSend->isChecked() ? "1" : "0";         // 是否逐行发送
     config.InputParam.IsFileLoopSend = this->ui->cB_pLineSend_loop->isChecked() ? "1" : "0"; // 是否循环发送
     config.InputParam.FileSendLineInterval = this->ui->pLineInterval->text();                // 逐行发送间隔
@@ -367,7 +365,7 @@ void lscom::on_btu_send_open_file_clicked()
  */
 void lscom::on_btu_send_file_clicked()
 {
-    if (this->importFileContentCache.size() > 0)
+    if (this->serviceAdapter->fileService->importFileContentCache.size() > 0)
     {
         if (this->serviceAdapter->strategyFactory->PotocolImp->GetConnectStatus())
         {
@@ -387,19 +385,17 @@ void lscom::on_btu_send_file_clicked()
                     this->serviceAdapter->logService->setTextLog(this->ui->log_text, "时间间隔格式错误！[默认使用1000ms作为之间间隔]", Inner, Error);
                     interval = 1000;
                 }
-                QElapsedTimer timer;
-                for (const QString &data : importFileContentCache)
+                //是否循环发送
+                if (this->ui->cB_pLineSend_loop->isChecked())
                 {
-                    timer.restart();
-                    while (timer.elapsed() < interval)
+                    while (this->ui->cB_pLineSend_loop->isChecked())
                     {
-                        QCoreApplication::processEvents(); // 用于处理当前线程中的待处理事件 保证主线程不阻塞
+                        this->serviceAdapter->fileService->SendFileByLine(interval);
                     }
-                    this->serviceAdapter->strategyFactory->PotocolImp->SendData(data.toUtf8());
-
-                    // 这个操作是异步的 这里不适合
-                    //  QTimer::singleShot(interval, this, [=]()
-                    //                     { this->serviceAdapter->serialService->SendData(data.toUtf8()); });
+                }
+                else
+                {
+                    this->serviceAdapter->fileService->SendFileByLine(interval);
                 }
             }
             else // 全量发送
@@ -423,9 +419,9 @@ void lscom::on_btu_send_file_clicked()
  */
 void lscom::on_btu_clear_file_clicked()
 {
-    this->ui->importFileName->clear();
+    this->serviceAdapter->fileService->fileClear();
     this->ui->text_file_area->clear();
-    this->importFilePathCache.clear();
+    this->ui->importFileName->clear();
 }
 
 // ******************** 结束：页面事件响应 ********************
@@ -459,6 +455,3 @@ lscom::~lscom()
     delete serviceAdapter;
     delete ui;
 }
-
-
-

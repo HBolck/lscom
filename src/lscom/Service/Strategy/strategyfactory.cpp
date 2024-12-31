@@ -15,6 +15,7 @@ strategy_factory::StrategyFactory::StrategyFactory(lscom_service::LogService *lo
     this->textEdit = textEdit;
     this->portImpCache = {
         {SerialPort, new lscom_service::serialImp(log, textEdit)}};
+    this->PointToPotocol(SerialPort);//构建的时候默认指向串口协议
 }
 
 /**
